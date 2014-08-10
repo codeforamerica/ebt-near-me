@@ -2,7 +2,9 @@ import mechanize
 from bs4 import BeautifulSoup
 import csv
 
-URL = 'https://www.ebt.ca.gov/caebtclient/cashlocationSearch.recip'
+# Sample complete URL: https://www.ebt.ca.gov/caebtclient/cashlocationSearch.recip?zip=&city=&countyCode=38&searchType=0&name=&startIndex=1&sortColumn=4&descending=0&showAll=1
+URL_START_FRAGMENT = 'https://www.ebt.ca.gov/caebtclient/cashlocationSearch.recip?zip=&city=&countyCode='
+URL_END_FRAGMENT = '&searchType=0&name=&startIndex=1&sortColumn=4&descending=0&showAll=1'
 
 f = open('output.csv', 'w')
 writer = csv.writer(f)
@@ -11,15 +13,10 @@ writer = csv.writer(f)
 for i in range(1, 59):
     br = mechanize.Browser()
 
-    br.open(URL)
-    br.select_form(name='cashlocationSearchForm')
-
     # If you want a multipage one for testing, use '38' for San Francisco.
-    two_digit_i = str(i).zfill(2)
-    br['countyCode'] = [two_digit_i]
-    br.submit()
-
-    # @todo: "Click" the 'Show All' link. Mechanize won't work w/ Javascript.
+    county_code = str(i).zfill(2)
+    URL = URL_START_FRAGMENT + county_code + URL_END_FRAGMENT
+    br.open(URL)
 
     soup = BeautifulSoup(br.response().read())
 
@@ -31,12 +28,12 @@ for i in range(1, 59):
             name = col[0].string
             address = col[1].string
             city = col[2].string
-            # state (is irrelevant because it'll always be CALIFORNIA)
+            state = col[3].string   # Irrelevant because it'll always be CA, but hey.
             zipcode = col[4].string
             offers_meals = col[5].string.strip()
             is_farmers_market = col[6].string.strip()
 
-            record = (name, address, city, zipcode, offers_meals, is_farmers_market)
+            record = (name, address, city, state, zipcode, offers_meals, is_farmers_market)
             writer.writerow(record)
 
     br.close()
