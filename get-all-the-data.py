@@ -19,6 +19,8 @@ for i in range(1, 59):
     br['countyCode'] = [two_digit_i]
     br.submit()
 
+    # @todo: "Click" the 'Show All' link. Mechanize won't work w/ Javascript.
+
     soup = BeautifulSoup(br.response().read())
 
     table = soup.find('table', border=1)
