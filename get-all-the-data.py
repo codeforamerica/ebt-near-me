@@ -1,10 +1,12 @@
 import mechanize
 from bs4 import BeautifulSoup
+import csv
 
 URL = 'https://www.ebt.ca.gov/caebtclient/cashlocationSearch.recip'
 
 # Hat tip to http://adesquared.wordpress.com/2013/06/16/using-python-beautifulsoup-to-scrape-a-wikipedia-table/
 f = open('output.csv', 'w')
+writer = csv.writer(f)
 
 # Working from the example at http://wwwsearch.sourceforge.net/mechanize/
 
@@ -41,8 +43,7 @@ for i in range(1, 59):
             is_farmers_market = col[6].string.strip()
 
             record = (name, address, city, zipcode, offers_meals, is_farmers_market)
-            results = ",".join(record) + '\n'
-            f.write(results)
+            writer.writerow(record)
 
     br.close()
 
@@ -50,5 +51,4 @@ f.close()
 
 # @maybe: Write to a Google Fusion Table instead so you can immediately hook it up to the flushots codebase?
 
-# Fix handling of commas in business names so they don't trigger a new cell of the CSV. (A lot of floating 'inc's.)
 # Then fix the 'Show All' issue.
