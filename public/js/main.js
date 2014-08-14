@@ -1,5 +1,6 @@
 //  L E A F L E T   A N D   M A P B O X
 
+// MAP GLOBALS 
 var map = new L.map("map", {center: [37.783, -122.425], zoom: 13})
 .addLayer( new L.TileLayer('http://{s}.tiles.mapbox.com/v3/alanjosephwilliams.j8058jhn/{z}/{x}/{y}.png'));
 
