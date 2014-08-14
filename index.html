@@ -10,25 +10,25 @@
 
 	<!-- Optional theme -->
 	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
 	<link rel="stylesheet" href="public/css/app.css">
 
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-	<script src="public/js/main.js"></script>
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 </head>
 <html>
 	<body>
 		<main class="fluid-container">
-			<div class="row">
+			<div class="row" style="display:none">
 				<div class="col-md-12">
 					<h1>EBT Near Me</h1>
 					<p>This app will show you EBT locations near you.</p>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-12"></div>
-			</div>
+			<div id="map"></div>
 		</main>
 	</body>
+	<script src="public/js/main.js"></script>
 </html>
