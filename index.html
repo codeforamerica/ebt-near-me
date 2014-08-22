@@ -128,7 +128,7 @@
     function updateQuery() {
       sublayers[0].set({
         sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, store_name, address FROM ebt_locations_in_san_francisco ORDER BY the_geom <-> ST_SetSRID(ST_MakePoint("+lon+","+lat+"),4326) ASC LIMIT "+total+"",
-        cartocss: "#ebt_locations_in_san_francisco{[mapnik-geometry-type = point]{marker-fill: #F84F40; marker-line-color: #fff; marker-allow-overlap: true;}}"
+        cartocss: "#ebt_locations_in_san_francisco{[mapnik-geometry-type = point]{marker-fill: #009d28; marker-line-color: #fff; marker-allow-overlap: true;}}"
       });
     }
 
