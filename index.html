@@ -75,7 +75,7 @@
       .on('done', function(layer) {
         // change the query for the first layer
         var subLayerOptions = {
-          sql: "SELECT * FROM ebt_locations_in_san_francisco LIMIT 20",
+          sql: "SELECT * FROM ebt_locations_in_san_francisco LIMIT 10",
           cartocss: "#ebt_locations_in_san_francisco{marker-fill: #F84F40; marker-width: 8; marker-line-color: white; marker-line-width: 2; marker-clip: false; marker-allow-overlap: true;}"
         }
 
@@ -127,8 +127,8 @@
 
     function updateQuery() {
       sublayers[0].set({
-        sql: "WITH stores AS (SELECT cartodb_id, the_geom, the_geom_webmercator, store_name, address FROM ebt_locations_in_san_francisco ORDER BY the_geom <-> ST_SetSRID(ST_MakePoint("+lon+","+lat+"),4326) ASC LIMIT "+total+")",
-        cartocss: "#ebt_locations_in_san_francisco{[mapnik-geometry-type = 1]{text-name: [store_name]; text-face-name: 'DejaVu Sans Book'; text-size: 12; text-fill: #000; text-allow-overlap: false; text-halo-fill: #FFF; text-halo-radius: 2;} [mapnik-geometry-type = 2]{line-color: white; line-opacity: 0.5;} } "
+        sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, store_name, address FROM ebt_locations_in_san_francisco ORDER BY the_geom <-> ST_SetSRID(ST_MakePoint("+lon+","+lat+"),4326) ASC LIMIT "+total+"",
+        cartocss: "#ebt_locations_in_san_francisco{[mapnik-geometry-type = point]{marker-fill: #F84F40; marker-line-color: #fff; marker-allow-overlap: true;}}"
       });
     }
 
