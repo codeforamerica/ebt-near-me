@@ -82,6 +82,7 @@
         var sublayer = layer.getSubLayer(0);
 
         sublayer.set(subLayerOptions);
+        sublayer.infowindow.set('template', $('#infowindow_template').html());
 
         sublayers.push(sublayer);
         detectUserLocation();
@@ -141,6 +142,19 @@
 */
   }
 
+  </script>
+  <script type="infowindow/html" id="infowindow_template">
+    <div class="cartodb-popup">
+      <a href="#close" class="cartodb-popup-close-button close">x</a>
+      <div class="cartodb-popup-content-wrapper">
+        <div class="cartodb-popup-content">
+          <h4>Store Name</h4>
+          <p>{{content.data.store_name}}</p>
+          <h4>Address</h4>
+          <p>{{content.data.address}}</p>
+        </div>
+      </div>
+    </div>
   </script>
 </head>
 <html>
