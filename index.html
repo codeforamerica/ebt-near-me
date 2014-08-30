@@ -94,7 +94,7 @@
     function detectUserLocation(){
       if (navigator.geolocation) {
         var timeoutVal = 10 * 1000 * 1000;
-        navigator.geolocation.getCurrentLocation(
+        navigator.geolocation.getCurrentPosition(
           mapToPosition,
           alertError,
           { enableHighAccuracy: true, timeout: timeoutVal, maximumAge: 0 }
