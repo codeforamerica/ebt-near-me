@@ -4,26 +4,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Find places near you that accept EBT." />
+    <meta property="og:type" content="website" />
+    <meta property-"og:url" content="http://www.ebtnearme.org" />
+    <meta property="fb:admins" content="fureigh" />
+    <meta property="og:title" content="EBT Near Me" />
+    <meta property="og:description" content="Find places near you that accept EBT." />
+    <meta property="og:image" content="http://www.ebtnearme.org/assets/images/screenshot.png" />
     <title>EBT Near Me</title>
-	<!-- Latest compiled and minified CSS -->
-	<!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"> -->
-	<!-- Optional theme -->
-	<!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"> -->
 	<!-- C A R T O D B -->
 	<link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
-	<!-- L E A F L E T -->
-	<!--<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" /> -->
-	<!-- <link rel="stylesheet" href="public/css/app.css"> -->
-
-
-	<!-- J A V A C R I P T S -->
-	<!-- Latest compiled and minified JavaScript -->
-	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
-	<!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script> -->
-	<!-- C A R T O D B -->
 	<script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
-	<!-- L E A F L E T -->
-	<!-- <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script> -->
   <style>
     html, body {width:100%; height:100%; padding: 0; margin: 0;}
     #map { width: 100%; height:100%; background: black;}
@@ -75,8 +66,8 @@
       .on('done', function(layer) {
         // change the query for the first layer
         var subLayerOptions = {
-          sql: "SELECT * FROM ebt_locations_in_ca LIMIT 10",
-          cartocss: "#ebt_locations_in_ca{marker-fill: #F84F40; marker-width: 8; marker-line-color: white; marker-line-width: 2; marker-clip: false; marker-allow-overlap: true;}"
+          sql: "SELECT * FROM ebt_locations_usa LIMIT 10",
+          cartocss: "#ebt_locations_usa{marker-fill: #F84F40; marker-width: 8; marker-line-color: white; marker-line-width: 2; marker-clip: false; marker-allow-overlap: true;}"
         }
 
         var sublayer = layer.getSubLayer(0);
@@ -128,8 +119,8 @@
 
     function updateQuery() {
       sublayers[0].set({
-        sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, store_name, address FROM ebt_locations_in_ca ORDER BY the_geom <-> ST_SetSRID(ST_MakePoint("+lon+","+lat+"),4326) ASC LIMIT "+total+"",
-        cartocss: "#ebt_locations_in_ca{[mapnik-geometry-type = point]{marker-fill: #009d28; marker-line-color: #fff; marker-allow-overlap: true;}}"
+        sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, store_name, address FROM ebt_locations_usa ORDER BY the_geom <-> ST_SetSRID(ST_MakePoint("+lon+","+lat+"),4326) ASC LIMIT "+total+"",
+        cartocss: "#ebt_locations_usa{[mapnik-geometry-type = point]{marker-fill: #009d28; marker-line-color: #fff; marker-allow-overlap: true;}}"
       });
     }
 
@@ -179,5 +170,4 @@
 		  </div>
 		-->
 	</body>
-<!--	<script src="public/js/main.js"></script>-->
 </html>
