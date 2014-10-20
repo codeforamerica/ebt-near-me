@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Geolocation</title>
+    <title>EbtNearMe GMaps edition</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <style>
@@ -21,43 +21,46 @@
 var map;
 
 function initialize() {
+  var san_francisco = new google.maps.LatLng(37.7833, -122.4167);
   var mapOptions = {
-    zoom: 18
+    zoom: 7,
+    disableDefaultUI: true,
+    center: san_francisco
   };
-  map = new google.maps.Map(document.getElementById('map-canvas'),
-      mapOptions);
+  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
   // Try HTML5 geolocation
   navigator.geolocation.getCurrentPosition(foundLocation, handleNoGeolocation);
 
-  //Print lower SW/NE when dragend
-  google.maps.event.addListener(map, "dragend", function() {
-    addFusionLayer(map.getCenter());
+  // Add fusion layer  
+  layer = new google.maps.FusionTablesLayer({
+    query: {
+      select: 'FULL_ADDRESS',
+      from: '1ls1MKw-iQdNYHAGh_wbtsBaGF0t2qgJgJYbHFPxI'
+    },
+    styles: [{
+      markerOptions: {
+        iconName: 'large_green'
+      }
+    }]
+  });
+  layer.setMap(map);
+
+  // Custom info window for fusion layer
+  google.maps.event.addListener(layer, 'click', function(e) {
+
+    // Change the content of the InfoWindow
+    e.infoWindowHtml = "This is an <b>" + e.row['DEVICE TYPE'].value + "</b> at <b>" + e.row['NAME'].value + "</b>.<br>";
+    e.infoWindowHtml += "It costs <b>$" + e.row['SC AMOUNT'].value + "</b> and you can get up to <b>$" + e.row['CASH LIMIT'].value + "</b>.<br><br>";
+    e.infoWindowHtml += e.row['FULL_ADDRESS'].value;
   });
 }
 
-function addFusionLayer(center) {
-  // Add Fusion table layer
-  if (center.lat()) {
-    layer = new google.maps.FusionTablesLayer({
-      query: {
-        select: 'FULL_ADDRESS',
-        from: '1ls1MKw-iQdNYHAGh_wbtsBaGF0t2qgJgJYbHFPxI'
-      }
-    });
-    layer.setMap(map);
-
-    // where: 'ST_INTERSECTS(FULL_ADDRESS, CIRCLE(LATLNG(' + center.lat() +', ' + center.lng() + '), 3000))'
-    // styles: [{iconName: 'large_green'}]
-  }
-}
 
 function foundLocation(position) {
   var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+  map.setZoom(18);
   map.setCenter(pos);
-
-  // Add Fusion table layer
-  addFusionLayer(pos)
 }
 
 function handleNoGeolocation() {
@@ -69,12 +72,30 @@ function handleNoGeolocation() {
     content: content
   };
 
-  var infowindow = new google.maps.InfoWindow(options);
   map.setCenter(options.position);
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
 
+//Add Fusion layer when dragend
+// google.maps.event.addListener(map, "dragend", function() {
+//   addFusionLayer(map.getCenter());
+// });
+// function addFusionLayer(center) {
+//   // Add Fusion table layer
+//   if (center.lat()) {
+//     layer = new google.maps.FusionTablesLayer({
+//       query: {
+//         select: 'FULL_ADDRESS',
+//         from: '1ls1MKw-iQdNYHAGh_wbtsBaGF0t2qgJgJYbHFPxI'
+//       }
+//     });
+//     layer.setMap(map);
+
+//     // where: 'ST_INTERSECTS(FULL_ADDRESS, CIRCLE(LATLNG(' + center.lat() +', ' + center.lng() + '), 3000))'
+//     // styles: [{iconName: 'large_green'}]
+//   }
+// }
     </script>
   </head>
   <body>
