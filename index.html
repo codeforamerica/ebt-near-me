@@ -42,6 +42,12 @@ function initialize() {
     map : map
   });
 
+  // Retail info window
+  google.maps.event.addListener(retail_layer, 'click', function(e) {
+    e.infoWindowHtml = "<b>" + e.row['store_name'].value + "</b><br><br>";
+    e.infoWindowHtml += e.row['address'].value;
+  });
+
   // Add ATM layer
   atm_layer = new google.maps.FusionTablesLayer({
     query: {
@@ -56,15 +62,12 @@ function initialize() {
     map : map
   });
 
-
-  // Custom info window for fusion layer
-  // google.maps.event.addListener(atm_layer, 'click', function(e) {
-
-  //   // Change the content of the InfoWindow
-  //   e.infoWindowHtml = "This is an <b>" + e.row['DEVICE TYPE'].value + "</b> at <b>" + e.row['NAME'].value + "</b>.<br>";
-  //   e.infoWindowHtml += "It costs <b>$" + e.row['SC AMOUNT'].value + "</b> and you can get up to <b>$" + e.row['CASH LIMIT'].value + "</b>.<br><br>";
-  //   e.infoWindowHtml += e.row['FULL_ADDRESS'].value;
-  // });
+  // ATM info window
+  google.maps.event.addListener(atm_layer, 'click', function(e) {
+    e.infoWindowHtml = "This is an <b>" + e.row['DEVICE TYPE'].value + "</b> at <b>" + e.row['NAME'].value + "</b>.<br>";
+    e.infoWindowHtml += "It costs <b>$" + e.row['SC AMOUNT'].value + "</b> and you can get up to <b>$" + e.row['CASH LIMIT'].value + "</b>.<br><br>";
+    e.infoWindowHtml += e.row['FULL_ADDRESS'].value;
+  });
 }
 
 
