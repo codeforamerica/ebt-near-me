@@ -42,8 +42,8 @@ h1 {
 	vertical-align: top;
 	font-family: "proxima-nova", sans-serif;
 	font-size: 18px;
-	color: white;
 	margin: .9em 0;
+	color: white;
 }
 
 h1.title-thick {
@@ -58,6 +58,16 @@ h1.title-thin {
 	font-weight: 300;
 }
 
+
+.search-icon {
+	position: absolute;
+	right: 20px;
+	vertical-align: top;
+	width: 1.5em;
+	height: 1.5em;
+	margin: .9em 0;
+	color: white;
+}
 
 #map-canvas {
 	height: 92%;
