@@ -58,14 +58,19 @@ h1.title-thin {
 	font-weight: 300;
 }
 
+.search-target {
+	position: absolute;
+	right: 0;
+	height: 5em;
+	width: 5em;
+	background-color: rgba(0,0,0,0);
+	border: none;
+}
 
 .search-icon {
-	position: absolute;
-	right: 1.5em;
-	vertical-align: top;
-	width: 1.5em;
-	height: 1.5em;
-	margin: .9em 0;
+	width: 2em;
+	height: 2em;
+	margin: 0 auto;
 	color: white;
 }
 
@@ -91,11 +96,14 @@ h1.title-thin {
 		font-size: 24px;
 		margin: 1em 0;
 	}
-	.search-icon {
+	.search-target {
 		right: 2em;
-		width: 2em;
-		height: 2em;
-		margin: 1.2em 0;
+		width: 7em;
+		height: 7em;
+	}
+	.search-icon {
+		width: 3em;
+		height: 3em;
 	}
 	#map-canvas {
 		height: 100%;
