@@ -32,24 +32,38 @@ function initialize() {
   // Try HTML5 geolocation
   navigator.geolocation.getCurrentPosition(foundLocation, handleNoGeolocation);
 
-  // Add fusion layer  
-  layer = new google.maps.FusionTablesLayer({
+  // Add retail layer
+  retail_layer = new google.maps.FusionTablesLayer({
+    query: {
+      select: 'latitude',
+      from: '1Vb3R1ufxWU3cPwBg0kYiKEcJJ-lEn_vbbbWKplfo',
+      where: "state = 'CA'"
+    },
+    map : map
+  });
+
+  // Retail info window
+  google.maps.event.addListener(retail_layer, 'click', function(e) {
+    e.infoWindowHtml = "<b>" + e.row['store_name'].value + "</b><br><br>";
+    e.infoWindowHtml += e.row['address'].value;
+  });
+
+  // Add ATM layer
+  atm_layer = new google.maps.FusionTablesLayer({
     query: {
       select: 'FULL_ADDRESS',
       from: '1ls1MKw-iQdNYHAGh_wbtsBaGF0t2qgJgJYbHFPxI'
     },
     styles: [{
       markerOptions: {
-        iconName: 'large_green'
+        iconName: 'small_green'
       }
-    }]
+    }],
+    map : map
   });
-  layer.setMap(map);
 
-  // Custom info window for fusion layer
-  google.maps.event.addListener(layer, 'click', function(e) {
-
-    // Change the content of the InfoWindow
+  // ATM info window
+  google.maps.event.addListener(atm_layer, 'click', function(e) {
     e.infoWindowHtml = "This is an <b>" + e.row['DEVICE TYPE'].value + "</b> at <b>" + e.row['NAME'].value + "</b>.<br>";
     e.infoWindowHtml += "It costs <b>$" + e.row['SC AMOUNT'].value + "</b> and you can get up to <b>$" + e.row['CASH LIMIT'].value + "</b>.<br><br>";
     e.infoWindowHtml += e.row['FULL_ADDRESS'].value;
