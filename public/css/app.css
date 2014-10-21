@@ -1,14 +1,18 @@
-/* Hierarchy of properties */
+ /* Hierarchy of properties */
 /* 1. Layout */
 /* 2. Dimensions */
 /* 3. Colors and fonts */
 /* 4. Borders and whatnot */
 /* 5. Z-index */
 
+/* Blue Color */
+/* #1f75bb */
+
+
 html, body {
 	height: 100%;
-	margin: 0;
-	padding: 0;
+	margin: 0px;
+	padding: 0px;
 }
 
 header {
@@ -18,22 +22,46 @@ header {
 	z-index: 200;
 }
 
+.header-content {
+	width: 100%;
+	height: 100%;
+	background-color: #1f75bb;
+	border-bottom: 1px solid gray;
+}
+
+.logo-img {
+	position: relative;
+	display: inline-block;
+	width: 85px;
+	z-index: 200;
+}
+
+h1 {
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+	font-family: "proxima-nova", sans-serif;
+	font-size: 24px;
+	color: white;
+	margin: 1em 0;
+}
+
+h1.title-thick {
+	font-weight: 700;
+}
+
+h1.title-regular {
+	font-weight: 500;
+}
+
+h1.title-thin {
+	font-weight: 300;
+}
+
+
 #map-canvas {
 	height: 90%;
 	margin: 0;
 	padding: 0;
 	z-index: 100;
 }
-
-h1 {
-	font-size: 1em;
-	color: blue;
-}
-
-
-/* {
-	position: absolute;
-	top: 4em;
-	bottom: 0;
-	width: 100%;
-}*/
