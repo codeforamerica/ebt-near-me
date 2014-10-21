@@ -52,13 +52,11 @@ function initialize() {
   atm_layer = new google.maps.FusionTablesLayer({
     query: {
       select: 'FULL_ADDRESS',
-      from: '1ls1MKw-iQdNYHAGh_wbtsBaGF0t2qgJgJYbHFPxI'
-    },
-    styles: [{
-      markerOptions: {
-        iconName: 'small_green'
-      }
-    }],
+      from: '1ls1MKw-iQdNYHAGh_wbtsBaGF0t2qgJgJYbHFPxI'},
+    styles: [
+      {where: "SC = 'NO'", markerOptions: {iconName: 'large_green'} },
+      {where: "SC = 'YES'",markerOptions: {iconName: 'large_yellow'}}
+    ],
     map : map
   });
 
