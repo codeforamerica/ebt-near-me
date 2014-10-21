@@ -16,7 +16,7 @@ html, body {
 }
 
 header {
-	height: 10%;
+	height: 8%;
 	margin: 0;
 	padding: 0;
 	z-index: 200;
@@ -32,7 +32,7 @@ header {
 .logo-img {
 	position: relative;
 	display: inline-block;
-	width: 85px;
+	width: 65px;
 	z-index: 200;
 }
 
@@ -41,9 +41,9 @@ h1 {
 	display: inline-block;
 	vertical-align: top;
 	font-family: "proxima-nova", sans-serif;
-	font-size: 24px;
+	font-size: 18px;
 	color: white;
-	margin: 1em 0;
+	margin: .9em 0;
 }
 
 h1.title-thick {
@@ -60,8 +60,27 @@ h1.title-thin {
 
 
 #map-canvas {
-	height: 90%;
+	height: 92%;
 	margin: 0;
 	padding: 0;
 	z-index: 100;
+}
+
+
+/* D E S K T O P   S T Y L E S */
+
+@media (min-width: 64em) {
+	header {
+		height: 10%;
+	}
+	.logo-img {
+		width: 85px;
+	}
+	h1 {
+		font-size: 24px;
+		margin: 1em 0;
+	}
+	#map-canvas {
+		height: 90%;
+	}
 }
