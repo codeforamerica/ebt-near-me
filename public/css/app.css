@@ -16,7 +16,7 @@ html, body {
 }
 
 header {
-	height: 8%;
+	height: 2.85em;
 	margin: 0;
 	padding: 0;
 	z-index: 200;
@@ -61,7 +61,7 @@ h1.title-thin {
 
 .search-icon {
 	position: absolute;
-	right: 20px;
+	right: 1.5em;
 	vertical-align: top;
 	width: 1.5em;
 	height: 1.5em;
@@ -79,18 +79,26 @@ h1.title-thin {
 
 /* D E S K T O P   S T Y L E S */
 
-@media (min-width: 64em) {
+@media (min-width: 960px) {
 	header {
-		height: 10%;
+		height: 4em;
+		z-index: 200;
 	}
 	.logo-img {
-		width: 85px;
+		width: 90px;
 	}
 	h1 {
 		font-size: 24px;
 		margin: 1em 0;
 	}
+	.search-icon {
+		right: 2em;
+		width: 2em;
+		height: 2em;
+		margin: 1.2em 0;
+	}
 	#map-canvas {
-		height: 90%;
+		height: 100%;
+		z-index: 100;
 	}
 }
