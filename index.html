@@ -4,14 +4,13 @@
     <title>EbtNearMe GMaps edition</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <style>
-      html, body, #map-canvas {
-        height: 100%;
-        margin: 0px;
-        padding: 0px
-      }
-    </style>
+    <!-- C U S T O M   S T Y L E S  -->
+    <link rel="stylesheet" href="/public/css/app.css">
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+
+    <!-- A J W    T Y P E K I T  -->
+    <script src="//use.typekit.net/ize7qgl.js"></script>
+    <script>try{Typekit.load();}catch(e){}</script>
 
     <script>
 // Note: This example requires that you consent to location sharing when
@@ -99,6 +98,9 @@ google.maps.event.addDomListener(window, 'load', initialize);
     </script>
   </head>
   <body>
+    <header>
+      <h1>EBT-Near-Me</h1>
+    </header>
     <div id="map-canvas"></div>
   </body>
 </html>

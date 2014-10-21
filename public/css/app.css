@@ -1,11 +1,39 @@
+/* Hierarchy of properties */
+/* 1. Layout */
+/* 2. Dimensions */
+/* 3. Colors and fonts */
+/* 4. Borders and whatnot */
+/* 5. Z-index */
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+header {
+	height: 10%;
+	margin: 0;
+	padding: 0;
+	z-index: 200;
+}
+
+#map-canvas {
+	height: 90%;
+	margin: 0;
+	padding: 0;
+	z-index: 100;
+}
+
 h1 {
+	font-size: 1em;
 	color: blue;
 }
 
-#map {
+
+/* {
 	position: absolute;
-	top: 0;
+	top: 4em;
 	bottom: 0;
 	width: 100%;
-
-}
+}*/
