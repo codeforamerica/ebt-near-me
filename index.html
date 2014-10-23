@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>EbtNearMe GMaps edition</title>
+    <title>EbtNearMe</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <style>
@@ -70,7 +70,7 @@ function initialize() {
   // Retail info window
   google.maps.event.addListener(retail_layer, 'click', function(e) {
     e.infoWindowHtml = "<b>" + e.row['store_name'].value + "</b><br><br>";
-    e.infoWindowHtml += e.row['address'].value;
+    e.infoWindowHtml += e.row['address'].value + "<br>";
   });
 
   // Add ATM layer
@@ -87,9 +87,10 @@ function initialize() {
 
   // ATM info window
   google.maps.event.addListener(atm_layer, 'click', function(e) {
-    e.infoWindowHtml = "This is an <b>" + e.row['DEVICE TYPE'].value + "</b> at <b>" + e.row['NAME'].value + "</b>.<br>";
+    e.infoWindowHtml = "This is a <b>" + e.row['DEVICE TYPE'].value + "</b> at <b>" + e.row['NAME'].value + "</b>.<br>";
     e.infoWindowHtml += "It costs <b>$" + e.row['SC AMOUNT'].value + "</b> and you can get up to <b>$" + e.row['CASH LIMIT'].value + "</b>.<br><br>";
-    e.infoWindowHtml += e.row['FULL_ADDRESS'].value;
+    e.infoWindowHtml += "<a href='http://maps.google.com?saddr=Current%20Location&daddr=" + encodeURIComponent(e.row['FULL_ADDRESS'].value) + "'>Directions</a>" + "<br>";
+    ;
   });
 }
 
