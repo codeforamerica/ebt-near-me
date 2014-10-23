@@ -6,8 +6,6 @@
     <meta charset="utf-8">
 
     <!-- G O O G L E  M A P S  A P I  -->
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
-
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
 
     <!-- j Q U E R Y   1.1   F O R   O L D   I E   S U P P O R T -->
@@ -82,7 +80,7 @@ function initialize() {
   // Search
   var markers = [];
   var input = (document.getElementById('pac-input'));
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+  map.controls[google.maps.ControlPosition.TOP_CENTER ].push(input);
   var searchBox = new google.maps.places.SearchBox((input));
 
   // Listen for the event fired when the user selects an item from the
@@ -165,21 +163,15 @@ google.maps.event.addDomListener(window, 'load', initialize);
         <h1 id="title-thick" class="title">EBT</h1>
         <h1 id="title-regular"class="title">Near</h1>
         <h1 id="title-thin" class="title">Me</h1>
-<!--         <button class="search-target">
-          <span class="js-geomicon search-icon" data-icon="search"></span>
-        </button> -->
+        <button id="toggle-target">
+          <span id="close-icon" class="js-geomicon toggle-icon" data-icon="close"></span>
+          <span id="search-icon" class="js-geomicon toggle-icon" data-icon="search"></span>
+        </button>
       </div>
     </header>
     </div>
-    <div id="map-canvas">
-    <div class="search-test">
-      <div id="sb-search" class="sb-search">
-        <form>
-          <input id="pac-input" class="sb-search-input" placeholder="Search by address" type="search" name="search">
-          <input class="sb-search-submit" type="submit" value="">
-        </form>
-      </div>
-    </div>
+    <input id="pac-input" class="sb-search-input" placeholder="Search by address" type="search" name="search" style="display:hidden">
+    <div id="map-canvas"></div>
   </body>
 </html>
 
@@ -188,6 +180,26 @@ google.maps.event.addDomListener(window, 'load', initialize);
   var icons = document.querySelectorAll('.js-geomicon');
   Geomicons.inject(icons);
 </script>
+
+<!-- S H O W   A N D   H I D E   S E A R C H -->
+
+<script>
+
+// With the element initially shown, we can hide it slowly:
+
+$( "#toggle-target" ).click(function() {
+  if ($("#pac-input").is(':visible')) {
+    $( "#pac-input" ).hide();
+    $( "#close-icon").hide();
+    $( "#search-icon").show();
+  } else {
+    $("#pac-input").show();
+    $("#search-icon").hide();
+    $("#close-icon").show();
+  }
+});
+</script>
+
 
 <!-- S E A R CH   A N I M A T I O N -->
 <!-- 
