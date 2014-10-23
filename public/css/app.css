@@ -8,6 +8,8 @@
 /* Blue Color */
 /* #1f75bb */
 
+/* namespacing conventions */
+/* prefix-verb-noun */
 
 html, body {
 	height: 100%;
@@ -28,6 +30,51 @@ header {
 	background-color: #1f75bb;
 	border-bottom: 1px solid gray;
 }
+
+
+/* T E S T   C O N T E N T */
+
+.search-test {
+	height: 4em;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	background: #f6f6f6;
+	z-index: 200;
+}
+
+.sb-search {
+	width: 100%;
+}
+
+.sb-search-input {
+	width: 50%;
+	padding: 1em;
+	border: none;
+}
+
+.sb-search-submit {
+	width: 10%;
+	height: 100%;
+}
+
+.sb-search-icon {
+	color: #fff;
+	width: 75%;
+}
+
+.sb-search-open {
+
+}
+
+
+.sb-search.sb-search-open,
+.no-js .sb-search {
+    width: 100%;
+}
+
+/* E N D   T E S T  */
+
 
 .logo-img {
 	position: relative;
