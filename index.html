@@ -12,6 +12,7 @@
       }
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <script src="public/js/geolocationmarker-compiled.js"></script>
 
     <script>
 // Note: This example requires that you consent to location sharing when
@@ -32,6 +33,30 @@ function initialize() {
   // Try HTML5 geolocation
   navigator.geolocation.getCurrentPosition(foundLocation, handleNoGeolocation);
 
+  // Set map options
+  var styles = [
+    {
+      featureType: "poi",
+      elementType: "all",
+      stylers: [
+        { visibility: "off" }
+      ]
+    }
+  ];
+  map.setOptions({styles: styles});
+
+  // Geomarker
+  var GeoMarker = new GeolocationMarker();
+    GeoMarker.setCircleOptions({
+      visible: false});
+
+    google.maps.event.addListenerOnce(GeoMarker, 'position_changed', function() {
+      map.setCenter(this.getPosition());
+      map.fitBounds(this.getBounds());
+    });
+  
+  GeoMarker.setMap(map);
+  
   // Add retail layer
   retail_layer = new google.maps.FusionTablesLayer({
     query: {
