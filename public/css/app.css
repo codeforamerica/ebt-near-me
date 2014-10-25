@@ -1,11 +1,160 @@
-h1 {
-	color: blue;
+ /* Hierarchy of properties */
+/* 1. Layout */
+/* 2. Dimensions */
+/* 3. Colors and fonts */
+/* 4. Borders and whatnot */
+/* 5. Z-index */
+
+/* Blue Color */
+/* #1f75bb */
+
+/* namespacing conventions */
+/* prefix-verb-noun */
+
+html, body {
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
 }
 
-#map {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	width: 100%;
+/* iOS Safari tap highlight fix */
+html {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
 
+header {
+	height: 2.85em;
+	margin: 0;
+	padding: 0;
+	z-index: 200;
+}
+
+.header-content {
+	width: 100%;
+	height: 100%;
+	background-color: #1f75bb;
+	border-bottom: 1px solid gray;
+}
+
+
+/* S E A R C H */
+
+#pac-input {
+	border-radius: 0 0 0 0;
+	-webkit-border-radius: 0 0 0 0;
+}
+
+.sb-search-input {
+	text-align: center;
+	width: 100%;
+	height: 2em;
+	font-size: 1.25em;
+	border: 1px solid white;
+	border-radius: 0 0 0 0;
+	-webkit-border-radius: 0 0 0 0;
+	-moz-border-radius: 0 0 0 0;
+	padding: 18px;
+}
+
+.input-hide {
+	z-index: 0;
+}
+
+.input-show {
+	z-index: 200;
+}
+
+.sb-search-submit {
+	position: relative;
+	display: inline-block;
+	width: 8%;
+}
+
+.logo-img {
+	position: relative;
+	display: inline-block;
+	width: 65px;
+	z-index: 200;
+}
+
+h1 {
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+	font-family: "proxima-nova", sans-serif;
+	font-size: 18px;
+	margin: .9em 0;
+	color: white;
+}
+
+h1#title-thick {
+	font-weight: 700;
+}
+
+h1#title-regular {
+	font-weight: 500;
+}
+
+h1#title-thin {
+	font-weight: 300;
+}
+
+#toggle-target {
+	position: absolute;
+	right: 0;
+	height: 5em;
+	width: 5em;
+	background-color: rgba(0,0,0,0);
+	border: none;
+}
+
+.toggle-icon {
+	width: 2em;
+	height: 2em;
+	margin: 0 auto;
+	color: white;
+}
+
+#search-icon {
+	display: none;
+}
+
+#close-icon {
+	display: block;
+}
+
+#map-canvas {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	z-index: 100;
+}
+
+
+/* D E S K T O P   S T Y L E S */
+
+@media (min-width: 960px) {
+	header {
+		height: 4em;
+		z-index: 200;
+	}
+	.logo-img {
+		width: 90px;
+	}
+	h1 {
+		font-size: 24px;
+		margin: 1em 0;
+	}
+	#toggle-target {
+		right: 2em;
+		width: 7em;
+		height: 7em;
+	}
+	.toggle-icon {
+		width: 3em;
+		height: 3em;
+	}
+	#map-canvas {
+		height: 100%;
+	}
 }
