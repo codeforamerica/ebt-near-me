@@ -12,9 +12,6 @@
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
     <script src="public/js/geolocationmarker-compiled.js"></script>
 
-    <!-- G O O G L E  M A P S  A P I  -->
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
-
     <!-- j Q U E R Y   1.1   F O R   O L D   I E   S U P P O R T -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
@@ -35,6 +32,7 @@
 // is probably because you have denied permission for location sharing.
 
 var map;
+var defaultZoom = 10; // bug...using bounds instead of zoom throughout
 
 function initialize() {
   var san_francisco = new google.maps.LatLng(37.7833, -122.4167);
@@ -102,11 +100,20 @@ function initialize() {
   });
 
   // ATM info window
+  var directions_pre_link;
+  if (/iPhone/i.test(navigator.userAgent)) {
+    directions_pre_link = "<a href='http://maps.google.com/?saddr=Current%20Location&daddr="
+  } else if (/Android/i.test(navigator.userAgent)) {
+      directions_pre_link = "<a href='geo:"
+  } else {
+      directions_pre_link = "<a href='http://maps.google.com?q="
+  }
+
   google.maps.event.addListener(atm_layer, 'click', function(e) {
     e.infoWindowHtml = "This is a <b>" + e.row['DEVICE TYPE'].value + "</b> at <b>" + e.row['NAME'].value + "</b>.<br>";
     e.infoWindowHtml += "It costs <b>$" + e.row['SC AMOUNT'].value + "</b> and you can get up to <b>$" + e.row['CASH LIMIT'].value + "</b>.<br><br>";
-    e.infoWindowHtml += "<a href='http://maps.google.com?saddr=Current%20Location&daddr=" + encodeURIComponent(e.row['FULL_ADDRESS'].value) + "'>Directions</a>" + "<br>";
-    ;
+    e.infoWindowHtml += directions_pre_link + encodeURIComponent(e.row['FULL_ADDRESS'].value) + "'>Directions</a>" + "<br>";
+    console.log(e.infoWindowHtml);
   });
 
   // Search
@@ -155,7 +162,7 @@ function initialize() {
 
     // To do set bounds to maintain same zoom as before search
     map.fitBounds(bounds);
-    map.setZoom(18);
+    map.setZoom(defaultZoom);
   });
 
   // Bias the SearchBox results towards places that are within the bounds of the
@@ -168,7 +175,7 @@ function initialize() {
 
 function foundLocation(position) {
   var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-  map.setZoom(18);
+  map.setZoom(defaultZoom);
   map.setCenter(pos);
 }
 
