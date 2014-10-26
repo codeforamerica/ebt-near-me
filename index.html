@@ -42,98 +42,8 @@
     }
 */
   </style>
-
-  <script>
-  var map;
-
-  function init(){
-    // initiate leaflet map
-    map = new L.Map('map', {
-      center: [37.7756408,-122.4136494],
-      zoom: 3
-    })
-
-    L.tileLayer('https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png', {
-      attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms &amp; Feedback</a>'
-    }).addTo(map);
-
-    var layerUrl = 'http://cfa.cartodb.com/api/v2/viz/41b8ed52-23e4-11e4-9bed-0edbca4b5057/viz.json';
-
-    var sublayers = [];
-
-    cartodb.createLayer(map, layerUrl)
-      .addTo(map)
-      .on('done', function(layer) {
-        // change the query for the first layer
-        var subLayerOptions = {
-          sql: "SELECT * FROM ebt_locations_usa LIMIT 10",
-          cartocss: "#ebt_locations_usa{marker-fill: #F84F40; marker-width: 8; marker-line-color: white; marker-line-width: 2; marker-clip: false; marker-allow-overlap: true;}"
-        }
-
-        var sublayer = layer.getSubLayer(0);
-
-        sublayer.set(subLayerOptions);
-        sublayer.infowindow.set('template', $('#infowindow_template').html());
-
-        sublayers.push(sublayer);
-        detectUserLocation();
-      }).on('error', function() {
-        //log the error
-      });
-
-    // credit: http://html5doctor.com/finding-your-position-with-geolocation/
-    function detectUserLocation(){
-      if (navigator.geolocation) {
-        var timeoutVal = 10 * 1000 * 1000;
-        navigator.geolocation.getCurrentPosition(
-          mapToPosition,
-          alertError,
-          { enableHighAccuracy: true, timeout: timeoutVal, maximumAge: 0 }
-        );
-      }
-      else {
-        alert("Geolocation is not supported by this browser");
-      }
-
-      function alertError(error) {
-        var errors = {
-          1: 'Permission denied',
-          2: 'Position unavailable',
-          3: 'Request timeout'
-        };
-        alert("Error: " + errors[error.code]);
-      }
-    }
-
-    function mapToPosition(position){
-      lon = position.coords.longitude;
-      lat = position.coords.latitude;
-      updateQuery();
-      map.setView(new L.LatLng(lat,lon), 15);
-      new L.CircleMarker([lat,lon],{radius: 4}).addTo(map);
-    }
-
-    var lon,
-        lat,
-        total = 20;
-
-    function updateQuery() {
-      sublayers[0].set({
-        sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, store_name, address FROM ebt_locations_usa ORDER BY the_geom <-> ST_SetSRID(ST_MakePoint("+lon+","+lat+"),4326) ASC LIMIT "+total+"",
-        cartocss: "#ebt_locations_usa{[mapnik-geometry-type = point]{marker-fill: #009d28; marker-line-color: #fff; marker-allow-overlap: true;}}"
-      });
-    }
-
-/*
-    $('.button').click(function() {
-        $('.button').removeClass('selected'); $(this).addClass('selected');
-        total = $(this).attr('id');
-        updateQuery();
-    });
-*/
-  }
-
-  </script>
+  <script src= "http://code.jquery.com/jquery-1.10.0.min.js"></script>
+  <script src="public/js/nearme.js"></script>
   <script type="infowindow/html" id="infowindow_template">
     <div class="cartodb-popup">
       <a href="#close" class="cartodb-popup-close-button close">x</a>
@@ -159,7 +69,7 @@
   </script>
 </head>
 <html>
-	<body onload="init()">
+	<body>
 		<div id="map"></div>
 		<!--
 		  <div id='menu'>
