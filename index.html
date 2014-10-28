@@ -1,173 +1,240 @@
 <!DOCTYPE html>
-<html lang="en-us">
-<!-- With thanks to http://docs.cartodb.com/tutorials/query_by_distance.html -->
-<head>
+<html>
+  <head>
+    <title>EbtNearMe</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content="Find places near you that accept EBT." />
-    <meta property="og:type" content="website" />
-    <meta property-"og:url" content="http://www.ebtnearme.org" />
-    <meta property="fb:admins" content="fureigh" />
-    <meta property="og:title" content="EBT Near Me" />
-    <meta property="og:description" content="Find places near you that accept EBT." />
-    <meta property="og:image" content="http://www.ebtnearme.org/assets/images/screenshot.png" />
-    <title>EBT Near Me</title>
-	<!-- C A R T O D B -->
-	<link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
-	<script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
-  <style>
-    html, body {width:100%; height:100%; padding: 0; margin: 0;}
-    #map { width: 100%; height:100%; background: black;}
-/*
-    #menu { position: absolute; top: 5px; right: 10px; width: 400px; height:60px; background: transparent; z-index:10;}
-    #menu a {
-      margin: 15px 10px 0 0;
-      float: right;
-      vertical-align: baseline;
-      width: 70px;
-      padding: 10px;
-      text-align: center;
-      font: bold 11px "Helvetica",Arial;
-      line-height: normal;
-      color: #555;
-      border-radius: 4px;
-      border: 1px solid #777777;
-      background: #ffffff;
-      text-decoration: none;
-      cursor: pointer;
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="icon.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="icon.png">
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+    <script src="public/js/geolocationmarker-compiled.js"></script>
+
+    <!-- j Q U E R Y   1.1   F O R   O L D   I E   S U P P O R T -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <!-- A J W's   T Y P E K I T -->
+    <script src="//use.typekit.net/ize7qgl.js"></script>
+    <script>try{Typekit.load();}catch(e){}</script>
+
+    <!-- C U S T O M   S T Y L E S -->
+    <link rel="stylesheet" href="public/css/app.css">
+    <!-- Search Test -->
+<!--     <link rel="stylesheet" type="text/css" href="/public/css/search.css" /> -->
+
+    <!-- G E O M I C O N S -->
+    <script src="http://d2v52k3cl9vedd.cloudfront.net/geomicons/0.2.0/geomicons.min.js"></script>
+    <script>
+// Note: This example requires that you consent to location sharing when
+// prompted by your browser. If you see a blank space instead of the map, this
+// is probably because you have denied permission for location sharing.
+
+var map;
+var defaultZoom = 10; // bug...using bounds instead of zoom throughout
+
+function initialize() {
+  var san_francisco = new google.maps.LatLng(37.7833, -122.4167);
+  var mapOptions = {
+    zoom: 7,
+    disableDefaultUI: true,
+  };
+
+  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  map.setCenter(san_francisco);
+
+  // Try HTML5 geolocation
+  navigator.geolocation.getCurrentPosition(foundLocation, handleNoGeolocation);
+
+  // Set map options
+  var styles = [
+    {
+      featureType: "poi",
+      elementType: "all",
+      stylers: [
+        { visibility: "off" }
+      ]
     }
-    #menu a.selected,
-    #menu a:hover {
-      color: #F84F40;
-    }
-*/
-  </style>
+  ];
+  map.setOptions({styles: styles});
 
-  <script>
-  var map;
+  // Geomarker
+  var GeoMarker = new GeolocationMarker();
+    GeoMarker.setCircleOptions({
+      visible: false});
 
-  function init(){
-    // initiate leaflet map
-    map = new L.Map('map', {
-      center: [37.7756408,-122.4136494],
-      zoom: 3
-    })
-
-    L.tileLayer('https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png', {
-      attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms &amp; Feedback</a>'
-    }).addTo(map);
-
-    var layerUrl = 'http://cfa.cartodb.com/api/v2/viz/41b8ed52-23e4-11e4-9bed-0edbca4b5057/viz.json';
-
-    var sublayers = [];
-
-    cartodb.createLayer(map, layerUrl)
-      .addTo(map)
-      .on('done', function(layer) {
-        // change the query for the first layer
-        var subLayerOptions = {
-          sql: "SELECT * FROM ebt_locations_usa LIMIT 10",
-          cartocss: "#ebt_locations_usa{marker-fill: #F84F40; marker-width: 8; marker-line-color: white; marker-line-width: 2; marker-clip: false; marker-allow-overlap: true;}"
-        }
-
-        var sublayer = layer.getSubLayer(0);
-
-        sublayer.set(subLayerOptions);
-        sublayer.infowindow.set('template', $('#infowindow_template').html());
-
-        sublayers.push(sublayer);
-        detectUserLocation();
-      }).on('error', function() {
-        //log the error
-      });
-
-    // credit: http://html5doctor.com/finding-your-position-with-geolocation/
-    function detectUserLocation(){
-      if (navigator.geolocation) {
-        var timeoutVal = 10 * 1000 * 1000;
-        navigator.geolocation.getCurrentPosition(
-          mapToPosition,
-          alertError,
-          { enableHighAccuracy: true, timeout: timeoutVal, maximumAge: 0 }
-        );
-      }
-      else {
-        alert("Geolocation is not supported by this browser");
-      }
-
-      function alertError(error) {
-        var errors = {
-          1: 'Permission denied',
-          2: 'Position unavailable',
-          3: 'Request timeout'
-        };
-        alert("Error: " + errors[error.code]);
-      }
-    }
-
-    function mapToPosition(position){
-      lon = position.coords.longitude;
-      lat = position.coords.latitude;
-      updateQuery();
-      map.setView(new L.LatLng(lat,lon), 15);
-      new L.CircleMarker([lat,lon],{radius: 4}).addTo(map);
-    }
-
-    var lon,
-        lat,
-        total = 20;
-
-    function updateQuery() {
-      sublayers[0].set({
-        sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, store_name, address FROM ebt_locations_usa ORDER BY the_geom <-> ST_SetSRID(ST_MakePoint("+lon+","+lat+"),4326) ASC LIMIT "+total+"",
-        cartocss: "#ebt_locations_usa{[mapnik-geometry-type = point]{marker-fill: #009d28; marker-line-color: #fff; marker-allow-overlap: true;}}"
-      });
-    }
-
-/*
-    $('.button').click(function() {
-        $('.button').removeClass('selected'); $(this).addClass('selected');
-        total = $(this).attr('id');
-        updateQuery();
+    google.maps.event.addListenerOnce(GeoMarker, 'position_changed', function() {
+      map.setCenter(this.getPosition());
+      map.fitBounds(this.getBounds());
     });
-*/
+
+  GeoMarker.setMap(map);
+
+  // Add retail layer
+  retail_layer = new google.maps.FusionTablesLayer({
+    query: {
+      select: 'latitude',
+      from: '1Vb3R1ufxWU3cPwBg0kYiKEcJJ-lEn_vbbbWKplfo',
+      where: "state = 'CA'"
+    },
+    map : map
+  });
+
+  // Retail info window
+  google.maps.event.addListener(retail_layer, 'click', function(e) {
+    e.infoWindowHtml = "<b>" + e.row['store_name'].value + "</b><br><br>";
+    e.infoWindowHtml += e.row['address'].value + "<br>";
+  });
+
+  // Add ATM layer
+  atm_layer = new google.maps.FusionTablesLayer({
+    query: {
+      select: 'FULL_ADDRESS',
+      from: '1ls1MKw-iQdNYHAGh_wbtsBaGF0t2qgJgJYbHFPxI'},
+    styles: [
+      {where: "SC = 'NO'", markerOptions: {iconName: 'large_green'} },
+      {where: "SC = 'YES'",markerOptions: {iconName: 'large_yellow'}}
+    ],
+    map : map
+  });
+
+  // ATM info window
+  var directions_pre_link;
+  if (/iPhone/i.test(navigator.userAgent)) {
+    directions_pre_link = "<a href='http://maps.google.com/?saddr=Current%20Location&daddr="
+  } else if (/Android/i.test(navigator.userAgent)) {
+      directions_pre_link = "<a href='geo:"
+  } else {
+      directions_pre_link = "<a href='http://maps.google.com?q="
   }
 
-  </script>
-  <script type="infowindow/html" id="infowindow_template">
-    <div class="cartodb-popup">
-      <a href="#close" class="cartodb-popup-close-button close">x</a>
-      <div class="cartodb-popup-content-wrapper">
-        <div class="cartodb-popup-content">
-          <h4>Store Name</h4>
-          <p>{{content.data.store_name}}</p>
-          <h4>Address</h4>
-          <p>{{content.data.address}}</p>
-        </div>
-      </div>
-    </div>
-  </script>
-  <!-- G O O G L E  A N A L Y T I C S -->
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  google.maps.event.addListener(atm_layer, 'click', function(e) {
+    e.infoWindowHtml = "This is a <b>" + e.row['DEVICE TYPE'].value + "</b> at <b>" + e.row['NAME'].value + "</b>.<br>";
+    e.infoWindowHtml += "It costs <b>$" + e.row['SC AMOUNT'].value + "</b> and you can get up to <b>$" + e.row['CASH LIMIT'].value + "</b>.<br><br>";
+    e.infoWindowHtml += directions_pre_link + encodeURIComponent(e.row['FULL_ADDRESS'].value) + "'>Directions</a>" + "<br>";
+    console.log(e.infoWindowHtml);
+  });
 
-    ga('create', 'UA-48088102-5', 'auto');
-    ga('send', 'pageview');
-  </script>
-</head>
-<html>
-	<body onload="init()">
-		<div id="map"></div>
-		<!--
-		  <div id='menu'>
-		    <a href="#500" id="500" value=500 class="button 500">500</a>
-		    <a href="#100" id="100" value=100 class="button 100">100</a>
-		    <a href="#50" id="50" value=50 class="button 50">50</a>
-		    <a href="#10" id="10" value=10 class="button 10 selected">10</a>
-		  </div>
-		-->
-	</body>
+  // Search
+  var markers = [];
+  var input = (document.getElementById('pac-input'));
+  map.controls[google.maps.ControlPosition.TOP_CENTER ].push(input);
+  var searchBox = new google.maps.places.SearchBox((input));
+
+  // Listen for the event fired when the user selects an item from the
+  // pick list. Retrieve the matching places for that item.
+  google.maps.event.addListener(searchBox, 'places_changed', function() {
+    var places = searchBox.getPlaces();
+
+    if (places.length == 0) {
+      return;
+    }
+    for (var i = 0, marker; marker = markers[i]; i++) {
+      marker.setMap(null);
+    }
+
+    // For each place, get the icon, place name, and location.
+    markers = [];
+    var bounds = new google.maps.LatLngBounds();
+    for (var i = 0, place; place = places[i]; i++) {
+      var image = {
+        url: place.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(25, 25)
+      };
+
+      // Create a marker for each place.
+      // To do: Don't show new market
+      var marker = new google.maps.Marker({
+        map: map,
+        icon: image,
+        title: place.name,
+        position: place.geometry.location
+      });
+
+      markers.push(marker);
+
+      bounds.extend(place.geometry.location);
+    }
+
+    // To do set bounds to maintain same zoom as before search
+    map.fitBounds(bounds);
+    map.setZoom(defaultZoom);
+  });
+
+  // Bias the SearchBox results towards places that are within the bounds of the
+  // current map's viewport.
+  google.maps.event.addListener(map, 'bounds_changed', function() {
+    var bounds = map.getBounds();
+    searchBox.setBounds(bounds);
+  });
+}
+
+function foundLocation(position) {
+  var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+  map.setZoom(defaultZoom);
+  map.setCenter(pos);
+}
+
+function handleNoGeolocation() {
+  var content = 'Error: The Geolocation service failed.';
+
+  var options = {
+    map: map,
+    position: new google.maps.LatLng(60, 105),
+    content: content
+  };
+
+  map.setCenter(options.position);
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="header-content">
+        <img id="logo" class="logo-img" src="assets/images/retail-icon.png" alt="">
+        <h1 id="title-thick" class="title">EBT</h1>
+        <h1 id="title-regular"class="title">Near</h1>
+        <h1 id="title-thin" class="title">Me</h1>
+        <button id="toggle-target">
+          <span id="close-icon" class="js-geomicon toggle-icon" data-icon="close"></span>
+          <span id="search-icon" class="js-geomicon toggle-icon" data-icon="search"></span>
+        </button>
+      </div>
+    </header>
+    </div>
+    <input id="pac-input" class="sb-search-input" placeholder="Search by address" type="search" name="search" style="display:hidden">
+    <div id="map-canvas"></div>
+  </body>
 </html>
+
+<!-- I N J E C T   G E O M I C O N S -->
+<script>
+  var icons = document.querySelectorAll('.js-geomicon');
+  Geomicons.inject(icons);
+</script>
+
+<!-- S H O W   A N D   H I D E   S E A R C H -->
+
+<script>
+
+// With the element initially shown, we can hide it slowly:
+
+$( "#toggle-target" ).click(function() {
+  if ($("#pac-input").is(':visible')) {
+    $( "#pac-input" ).hide();
+    $( "#close-icon").hide();
+    $( "#search-icon").show();
+  } else {
+    $("#pac-input").show();
+    $("#search-icon").hide();
+    $("#close-icon").show();
+  }
+});
+</script>
