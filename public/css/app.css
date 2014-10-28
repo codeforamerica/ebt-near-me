@@ -158,3 +158,24 @@ h1#title-thin {
 		height: 100%;
 	}
 }
+
+/* Printing */
+#viewable-list-div {
+	display:none;
+}
+
+@media print {
+	#map-canvas {
+		width: 600px;
+		height: 500px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	#viewable-list-div {
+		display: inline;
+	}
+
+	header, .sb-search-input, .sb-search-submit {
+		display: none;
+	}
+}
