@@ -26,6 +26,7 @@
     <script src="http://d2v52k3cl9vedd.cloudfront.net/geomicons/0.2.0/geomicons.min.js"></script>
     <script>
 
+// Map variables
 var map;
 var no_geolocation_zoom = 10;
 var default_zoom = 18;
@@ -35,6 +36,7 @@ var visible_atm_data;
 var timeoutID; // So we don't query for visible data on every idle
 var retail_layer;
 var atm_layer;
+var marker;
 
 // Retail layer
 retail_layer = new google.maps.FusionTablesLayer({
@@ -207,51 +209,36 @@ function initialize() {
   navigator.geolocation.getCurrentPosition(foundLocation, handleNoGeolocation);
 
   // Search
-  var markers = [];
   var input = (document.getElementById('pac-input'));
   map.controls[google.maps.ControlPosition.TOP_CENTER ].push(input);
+  
   var searchBox = new google.maps.places.SearchBox((input));
 
   // Listen for the event fired when the user selects an item from the
-  // pick list. Retrieve the matching places for that item.
+  // pick list and get the first place that matches.
   google.maps.event.addListener(searchBox, 'places_changed', function() {
-    var places = searchBox.getPlaces();
+    place = searchBox.getPlaces()[0];
+    
+    // Get the icon, place name, and location.
+    var image = {
+      url: place.icon,
+      size: new google.maps.Size(71, 71),
+      origin: new google.maps.Point(0, 0),
+      anchor: new google.maps.Point(17, 34),
+      scaledSize: new google.maps.Size(25, 25)
+    };
 
-    if (places.length == 0) {
-      return;
-    }
-    for (var i = 0, marker; marker = markers[i]; i++) {
-      marker.setMap(null);
-    }
-
-    // For each place, get the icon, place name, and location.
-    markers = [];
-    var bounds = new google.maps.LatLngBounds();
-    for (var i = 0, place; place = places[i]; i++) {
-      var image = {
-        url: place.icon,
-        size: new google.maps.Size(71, 71),
-        origin: new google.maps.Point(0, 0),
-        anchor: new google.maps.Point(17, 34),
-        scaledSize: new google.maps.Size(25, 25)
-      };
-
-      // Create a marker for each place.
-      // To do: Don't show new marker
-      var marker = new google.maps.Marker({
-        map: map,
-        icon: image,
-        title: place.name,
-        position: place.geometry.location
-      });
-
-      markers.push(marker);
-
-      bounds.extend(place.geometry.location);
-    }
-
-    // To do set bounds to maintain same zoom as before search
-    map.fitBounds(bounds);
+    // Remove current marker if it exists and add the new one
+    if (marker) {marker.setMap(null)};
+    marker = new google.maps.Marker({
+      map: map,
+      icon: image,
+      title: place.name,
+      position: place.geometry.location
+    });
+    
+    // Center and zoom map to place
+    map.setCenter(place.geometry.location)
     map.setZoom(default_zoom);
   });
 
