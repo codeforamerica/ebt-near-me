@@ -9,32 +9,97 @@
     <link rel="apple-touch-icon" sizes="72x72" href="icon.png">
     <link rel="apple-touch-icon" sizes="114x114" href="icon.png">
     </style>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places,geometry"></script>
     <script src="public/js/geolocationmarker-compiled.js"></script>
 
-
-    <!-- j Q U E R Y   1.1   F O R   O L D   I E   S U P P O R T -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- j Q U E R Y -->
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 
     <!-- A J W's   T Y P E K I T -->
-    <script src="//use.typekit.net/ize7qgl.js"></script>
-    <script>try{Typekit.load();}catch(e){}</script>
+    <!--<script src="//use.typekit.net/ize7qgl.js"></script>-->
+    <!--<script>try{Typekit.load();}catch(e){}</script>-->
 
     <!-- C U S T O M   S T Y L E S -->
     <link rel="stylesheet" href="public/css/app.css">
-    <!-- Search Test -->
-<!--     <link rel="stylesheet" type="text/css" href="/public/css/search.css" /> -->
 
     <!-- G E O M I C O N S -->
     <script src="http://d2v52k3cl9vedd.cloudfront.net/geomicons/0.2.0/geomicons.min.js"></script>
     <script>
-// Note: This example requires that you consent to location sharing when
-// prompted by your browser. If you see a blank space instead of the map, this
-// is probably because you have denied permission for location sharing.
 
 var map;
-var defaultZoom = 10; // bug...using bounds instead of zoom throughout
+var defaultZoom = 10; // TO DO - respect this value throughout
 var atm_layer;
+var retail_layer;
+var visible_atm_data;
+
+function toTitleCase(str) {
+  return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
+
+function attachVisibleATMData() {
+  var sw = map.getBounds().getSouthWest()
+  var ne = map.getBounds().getNorthEast()
+  var r = (google.maps.geometry.spherical.computeDistanceBetween(sw, ne))/2
+  var center = map.getCenter()
+  var apiKey = 'AIzaSyDzaRUwEz7l0m3sEbROdDNCNRmsJ-zvUUc'
+  var query = 'SELECT * '
+              + 'FROM 1ls1MKw-iQdNYHAGh_wbtsBaGF0t2qgJgJYbHFPxI '
+              + 'WHERE ST_INTERSECTS(FULL_ADDRESS, CIRCLE(LATLNG' + center + ', ' + r + ')) '
+              + 'LIMIT 12';
+  var encodedQuery = encodeURIComponent(query);
+
+  // Construct the URL
+  var url = ['https://www.googleapis.com/fusiontables/v1/query'];
+      url.push('?sql=' + encodedQuery);
+      url.push('&key=' + apiKey);
+      url.push('&callback=?');
+
+  // Send the JSONP request using jQuery
+  $.ajax({
+    url: url.join(''),
+    dataType: 'jsonp',
+    success: onDataFetched
+  });
+}
+
+function onDataFetched(data) {
+  visible_atm_data = data;
+
+  // Append data to printable list
+  var list = $( "#printable-list-div ul" ).empty();
+  var rows = visible_atm_data['rows']
+  if (rows) {
+    $.each(rows, function( index, value ) {
+      device = value[2]
+      address = toTitleCase(value[3])
+      
+      var label
+      name = toTitleCase(value[4])
+      location_name = toTitleCase(value[5])
+      if(!location_name) { 
+        label = name
+      } else {
+        label = location_name
+      }
+
+      var cost_phrase
+      limit = parseInt(value[9])
+      cost = parseInt(value[11])
+      if(cost == 0) { 
+        cost_phrase = "It's <b>free</b>"
+      } else {
+        cost_phrase = "It costs $<b>" + cost + "</b>"
+      }
+
+      list.append( "<li><b>" + device + " at " + label + "</b><br>"
+        + cost_phrase + " to use and you can get up to <b>$" + limit + "</b>.<br>"
+        + address
+        + "</li>" );
+    });
+  } else {
+    list.append( "<li>If you find some ATMs on the map I'll print out the details here.</li>");
+  }
+}
 
 function initialize() {
   var san_francisco = new google.maps.LatLng(37.7833, -122.4167);
@@ -115,7 +180,6 @@ function initialize() {
     e.infoWindowHtml = "This is a <b>" + e.row['DEVICE TYPE'].value + "</b> at <b>" + e.row['NAME'].value + "</b>.<br>";
     e.infoWindowHtml += "It costs <b>$" + e.row['SC AMOUNT'].value + "</b> and you can get up to <b>$" + e.row['CASH LIMIT'].value + "</b>.<br><br>";
     e.infoWindowHtml += directions_pre_link + encodeURIComponent(e.row['FULL_ADDRESS'].value) + "'>Directions</a>" + "<br>";
-    console.log(e.infoWindowHtml);
   });
 
   // Search
@@ -179,6 +243,15 @@ function foundLocation(position) {
   var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
   map.setZoom(defaultZoom);
   map.setCenter(pos);
+
+  // Start listening for idle only after we find a good location
+  google.maps.event.addListener(map, 'idle', handleIdle);
+}
+
+var timeoutID;
+function handleIdle() {
+  window.clearTimeout(timeoutID);
+  timeoutID = window.setTimeout(attachVisibleATMData, 2000);
 }
 
 function handleNoGeolocation() {
@@ -194,10 +267,6 @@ function handleNoGeolocation() {
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
-
-window.onbeforeprint = function() {
-    console.log('This will be called before the user prints.');
-};
 
     </script>
   </head>
@@ -217,12 +286,7 @@ window.onbeforeprint = function() {
     </div>
     <input id="pac-input" class="sb-search-input" placeholder="Search by address" type="search" name="search" style="display:hidden">
     <div id="map-canvas"></div>
-    <div id="viewable-list-div">
-      <ul>
-        <li>List</li>
-        <li>of ATMs</li>
-        <li>Go here</li>
-      </ul></div>
+    <div id="printable-list-div"><ul></ul></div>
   </body>
 </html>
 
@@ -233,7 +297,6 @@ window.onbeforeprint = function() {
 </script>
 
 <!-- S H O W   A N D   H I D E   S E A R C H -->
-
 <script>
 
 // With the element initially shown, we can hide it slowly:
