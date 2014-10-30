@@ -27,7 +27,8 @@
     <script>
 
 var map;
-var defaultZoom = 10; // TO DO - respect this value throughout
+var no_geolocation_zoom = 10;
+var default_zoom = 18;
 var atm_layer;
 var retail_layer;
 var visible_atm_data;
@@ -104,12 +105,12 @@ function onDataFetched(data) {
 function initialize() {
   var san_francisco = new google.maps.LatLng(37.7833, -122.4167);
   var mapOptions = {
-    zoom: 7,
+    zoom: no_geolocation_zoom,
     disableDefaultUI: true,
+    center: san_francisco
   };
 
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-  map.setCenter(san_francisco);
 
   // Try HTML5 geolocation
   navigator.geolocation.getCurrentPosition(foundLocation, handleNoGeolocation);
@@ -133,7 +134,6 @@ function initialize() {
 
     google.maps.event.addListenerOnce(GeoMarker, 'position_changed', function() {
       map.setCenter(this.getPosition());
-      map.fitBounds(this.getBounds());
     });
 
   GeoMarker.setMap(map);
@@ -228,7 +228,7 @@ function initialize() {
 
     // To do set bounds to maintain same zoom as before search
     map.fitBounds(bounds);
-    map.setZoom(defaultZoom);
+    map.setZoom(default_zoom);
   });
 
   // Bias the SearchBox results towards places that are within the bounds of the
@@ -241,7 +241,7 @@ function initialize() {
 
 function foundLocation(position) {
   var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-  map.setZoom(defaultZoom);
+  map.setZoom(default_zoom);
   map.setCenter(pos);
 
   // Start listening for idle only after we find a good location
