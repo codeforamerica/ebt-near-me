@@ -158,3 +158,45 @@ h1#title-thin {
 		height: 100%;
 	}
 }
+
+/* Printing */
+#printable-list-div {
+	display:none;
+}
+
+@media print {
+	body {
+		width: 900px;
+	}
+
+	#map-canvas {
+		margin-left: auto;
+		margin-right: auto;
+		height: 900px;
+		width: 1350px;
+		zoom: .5;
+	}
+	
+	#printable-list-div {
+		display: inline;
+	}
+
+	#printable-list-div ul {
+		list-style-type: none;
+		padding: 0;
+		overflow:hidden;
+	}
+
+	#printable-list-div ul li {
+		padding-top: 20px;
+		padding-bottom: 20px;
+		line-height:1.5em;
+	  float:left;
+	  display:inline;
+	  width: 50%;
+	}
+
+	header, .sb-search-input, .sb-search-submit {
+		display: none;
+	}
+}
