@@ -32,12 +32,95 @@ var default_zoom = 18;
 var atm_layer;
 var retail_layer;
 var visible_atm_data;
+var timeoutID; // So we don't query for visible data on every idle
+var retail_layer;
+var atm_layer;
+
+// Retail layer
+retail_layer = new google.maps.FusionTablesLayer({
+  query: {
+    select: 'latitude',
+    from: '1Vb3R1ufxWU3cPwBg0kYiKEcJJ-lEn_vbbbWKplfo',
+    where: "state = 'CA'"
+  }
+});
+
+google.maps.event.addListener(retail_layer, 'click', function(e) {
+  e.infoWindowHtml = "<b>" + e.row['store_name'].value + "</b><br><br>";
+  e.infoWindowHtml += e.row['address'].value + "<br>";
+});
+
+// ATM layer
+atm_layer = new google.maps.FusionTablesLayer({
+  query: {
+    select: 'FULL_ADDRESS',
+    from: '1ls1MKw-iQdNYHAGh_wbtsBaGF0t2qgJgJYbHFPxI'},
+  styles: [
+    {where: "SC = 'NO'", markerOptions: {iconName: 'large_green'} },
+    {where: "SC = 'YES'",markerOptions: {iconName: 'large_yellow'}}
+  ]
+});
+
+var directions_pre_link;
+if (/iPhone/i.test(navigator.userAgent)) {
+  directions_pre_link = "<a href='http://maps.google.com/?saddr=Current%20Location&daddr="
+} else if (/Android/i.test(navigator.userAgent)) {
+    directions_pre_link = "<a href='geo:"
+} else {
+    directions_pre_link = "<a href='http://maps.google.com?q="
+}
+
+google.maps.event.addListener(atm_layer, 'click', function(e) {
+  e.infoWindowHtml = "This is a <b>" + e.row['DEVICE TYPE'].value + "</b> at <b>" + e.row['NAME'].value + "</b>.<br>";
+  e.infoWindowHtml += "It costs <b>$" + e.row['SC AMOUNT'].value + "</b> and you can get up to <b>$" + e.row['CASH LIMIT'].value + "</b>.<br><br>";
+  e.infoWindowHtml += directions_pre_link + encodeURIComponent(e.row['FULL_ADDRESS'].value) + "'>Directions</a>" + "<br>";
+});
+
+function foundLocation(position) {
+  var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+  map.setZoom(default_zoom);
+  map.setCenter(pos);
+  addLayersAndIdleListener();
+
+  // Geomarker
+  var GeoMarker = new GeolocationMarker();
+    GeoMarker.setCircleOptions({
+      visible: false});
+
+    google.maps.event.addListenerOnce(GeoMarker, 'position_changed', function() {
+      map.setCenter(this.getPosition());
+    });
+
+  GeoMarker.setMap(map);
+}
+
+function handleNoGeolocation() {
+  infowindow = new google.maps.InfoWindow({
+    map: map,
+    position: map.getCenter(),
+    content: "Hmmm, I couldn't detect your location.<br>Try searching for an address instead.",
+  });
+  infowindow.setMap(map);
+  addLayersAndIdleListener();
+}
+
+function handleIdle() {
+  window.clearTimeout(timeoutID);
+  timeoutID = window.setTimeout(queryAndAppendVisibleATMData, 2000);
+}
+
+function addLayersAndIdleListener() {
+  // Add layers and start idle listener after we settle on initial location
+  retail_layer.setMap(map);
+  atm_layer.setMap(map);
+  google.maps.event.addListener(map, 'idle', handleIdle);
+}
 
 function toTitleCase(str) {
   return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
 
-function attachVisibleATMData() {
+function queryAndAppendVisibleATMData() {
   var sw = map.getBounds().getSouthWest()
   var ne = map.getBounds().getNorthEast()
   var r = (google.maps.geometry.spherical.computeDistanceBetween(sw, ne))/2
@@ -59,11 +142,11 @@ function attachVisibleATMData() {
   $.ajax({
     url: url.join(''),
     dataType: 'jsonp',
-    success: onDataFetched
+    success: appendVisibleAtmData
   });
 }
 
-function onDataFetched(data) {
+function appendVisibleAtmData(data) {
   visible_atm_data = data;
 
   // Append data to printable list
@@ -103,20 +186,13 @@ function onDataFetched(data) {
 }
 
 function initialize() {
+  // Create map
   var san_francisco = new google.maps.LatLng(37.7833, -122.4167);
   var mapOptions = {
     zoom: no_geolocation_zoom,
     disableDefaultUI: true,
-    center: san_francisco
-  };
-
-  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-
-  // Try HTML5 geolocation
-  navigator.geolocation.getCurrentPosition(foundLocation, handleNoGeolocation);
-
-  // Set map options
-  var styles = [
+    center: san_francisco,
+    styles: [
     {
       featureType: "poi",
       elementType: "all",
@@ -124,63 +200,11 @@ function initialize() {
         { visibility: "off" }
       ]
     }
-  ];
-  map.setOptions({styles: styles});
+  ]};
+  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-  // Geomarker
-  var GeoMarker = new GeolocationMarker();
-    GeoMarker.setCircleOptions({
-      visible: false});
-
-    google.maps.event.addListenerOnce(GeoMarker, 'position_changed', function() {
-      map.setCenter(this.getPosition());
-    });
-
-  GeoMarker.setMap(map);
-
-  // Add retail layer
-  retail_layer = new google.maps.FusionTablesLayer({
-    query: {
-      select: 'latitude',
-      from: '1Vb3R1ufxWU3cPwBg0kYiKEcJJ-lEn_vbbbWKplfo',
-      where: "state = 'CA'"
-    },
-    map : map
-  });
-
-  // Retail info window
-  google.maps.event.addListener(retail_layer, 'click', function(e) {
-    e.infoWindowHtml = "<b>" + e.row['store_name'].value + "</b><br><br>";
-    e.infoWindowHtml += e.row['address'].value + "<br>";
-  });
-
-  // Add ATM layer
-  atm_layer = new google.maps.FusionTablesLayer({
-    query: {
-      select: 'FULL_ADDRESS',
-      from: '1ls1MKw-iQdNYHAGh_wbtsBaGF0t2qgJgJYbHFPxI'},
-    styles: [
-      {where: "SC = 'NO'", markerOptions: {iconName: 'large_green'} },
-      {where: "SC = 'YES'",markerOptions: {iconName: 'large_yellow'}}
-    ],
-    map : map
-  });
-
-  // ATM info window
-  var directions_pre_link;
-  if (/iPhone/i.test(navigator.userAgent)) {
-    directions_pre_link = "<a href='http://maps.google.com/?saddr=Current%20Location&daddr="
-  } else if (/Android/i.test(navigator.userAgent)) {
-      directions_pre_link = "<a href='geo:"
-  } else {
-      directions_pre_link = "<a href='http://maps.google.com?q="
-  }
-
-  google.maps.event.addListener(atm_layer, 'click', function(e) {
-    e.infoWindowHtml = "This is a <b>" + e.row['DEVICE TYPE'].value + "</b> at <b>" + e.row['NAME'].value + "</b>.<br>";
-    e.infoWindowHtml += "It costs <b>$" + e.row['SC AMOUNT'].value + "</b> and you can get up to <b>$" + e.row['CASH LIMIT'].value + "</b>.<br><br>";
-    e.infoWindowHtml += directions_pre_link + encodeURIComponent(e.row['FULL_ADDRESS'].value) + "'>Directions</a>" + "<br>";
-  });
+  // Try HTML5 geolocation
+  navigator.geolocation.getCurrentPosition(foundLocation, handleNoGeolocation);
 
   // Search
   var markers = [];
@@ -213,7 +237,7 @@ function initialize() {
       };
 
       // Create a marker for each place.
-      // To do: Don't show new market
+      // To do: Don't show new marker
       var marker = new google.maps.Marker({
         map: map,
         icon: image,
@@ -237,33 +261,6 @@ function initialize() {
     var bounds = map.getBounds();
     searchBox.setBounds(bounds);
   });
-}
-
-function foundLocation(position) {
-  var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-  map.setZoom(default_zoom);
-  map.setCenter(pos);
-
-  // Start listening for idle only after we find a good location
-  google.maps.event.addListener(map, 'idle', handleIdle);
-}
-
-var timeoutID;
-function handleIdle() {
-  window.clearTimeout(timeoutID);
-  timeoutID = window.setTimeout(attachVisibleATMData, 2000);
-}
-
-function handleNoGeolocation() {
-  var content = 'Error: The Geolocation service failed.';
-
-  var options = {
-    map: map,
-    position: new google.maps.LatLng(60, 105),
-    content: content
-  };
-
-  map.setCenter(options.position);
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
