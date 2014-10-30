@@ -42,6 +42,8 @@ header {
 #pac-input {
 	border-radius: 0 0 0 0;
 	-webkit-border-radius: 0 0 0 0;
+	left: 0;
+	display: none;
 }
 
 .sb-search-input {
@@ -106,6 +108,7 @@ h1#title-thin {
 	width: 5em;
 	background-color: rgba(0,0,0,0);
 	border: none;
+	cursor: pointer;
 }
 
 .toggle-icon {
@@ -116,11 +119,11 @@ h1#title-thin {
 }
 
 #search-icon {
-	display: none;
+	display: block;
 }
 
 #close-icon {
-	display: block;
+	display: none;
 }
 
 #map-canvas {

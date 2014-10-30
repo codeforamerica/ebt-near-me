@@ -210,7 +210,7 @@ function initialize() {
 
   // Search
   var input = (document.getElementById('pac-input'));
-  map.controls[google.maps.ControlPosition.TOP_CENTER ].push(input);
+  map.controls[google.maps.ControlPosition.TOP_LEFT ].push(input);
   
   var searchBox = new google.maps.places.SearchBox((input));
 
@@ -266,9 +266,9 @@ google.maps.event.addDomListener(window, 'load', initialize);
           <span id="search-icon" class="js-geomicon toggle-icon" data-icon="search"></span>
         </button>
       </div>
+      <input id="pac-input" class="sb-search-input" placeholder="Search by address" type="search" name="search">
     </header>
     </div>
-    <input id="pac-input" class="sb-search-input" placeholder="Search by address" type="search" name="search" style="display:hidden">
     <div id="map-canvas"></div>
     <div id="printable-list-div"><ul></ul></div>
   </body>
@@ -285,7 +285,9 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 // With the element initially shown, we can hide it slowly:
 
-$( "#toggle-target" ).click(function() {
+$( "#toggle-target" ).click(toggleSearchBox);
+
+function toggleSearchBox() {
   if ($("#pac-input").is(':visible')) {
     $( "#pac-input" ).hide();
     $( "#close-icon").hide();
@@ -295,5 +297,5 @@ $( "#toggle-target" ).click(function() {
     $("#search-icon").hide();
     $("#close-icon").show();
   }
-});
+}
 </script>
