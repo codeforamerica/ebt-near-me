@@ -43,9 +43,9 @@ ebt_data_layer = new google.maps.FusionTablesLayer({
     from: ebt_fusion_table,
     where: "state = 'CA'"},
   styles: [
-    {where: "type = 'store'", markerOptions: {iconName: 'large_blue'}},
-    {where: "type IN ('ATM', 'POS') AND surcharge = '0'", markerOptions: {iconName: 'large_green'}},
-    {where: "type IN ('ATM', 'POS') AND surcharge NOT EQUAL TO '0'", markerOptions: {iconName: 'large_yellow'}}
+    {where: "type = 'store'", markerOptions: {iconName: 'rec_convenience'}},
+    {where: "type IN ('ATM', 'POS') AND surcharge = '0'", markerOptions: {iconName: 'dollar'}},
+    {where: "type IN ('ATM', 'POS') AND surcharge NOT EQUAL TO '0'", markerOptions: {iconName: 'small_yellow'}}
   ]
 });
 
