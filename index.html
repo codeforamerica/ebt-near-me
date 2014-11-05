@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>EbtNearMe</title>
+    <title>EBT Near Me</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <link rel="shortcut icon" href="favicon.ico" />
@@ -30,36 +30,22 @@
 var map;
 var no_geolocation_zoom = 10;
 var default_zoom = 18;
-var atm_layer;
-var retail_layer;
+var ebt_fusion_table = '1gTMiiUxNgLDISIymtea1gJ9oph_F4Lt7BE-FLfAe';
+var ebt_data_layer;
 var visible_atm_data;
 var timeoutID; // So we don't query for visible data on every idle
-var retail_layer;
-var atm_layer;
 var marker;
 
-// Retail layer
-retail_layer = new google.maps.FusionTablesLayer({
+// EBT data layer
+ebt_data_layer = new google.maps.FusionTablesLayer({
   query: {
-    select: 'latitude',
-    from: '1Vb3R1ufxWU3cPwBg0kYiKEcJJ-lEn_vbbbWKplfo',
-    where: "state = 'CA'"
-  }
-});
-
-google.maps.event.addListener(retail_layer, 'click', function(e) {
-  e.infoWindowHtml = "<b>" + e.row['store_name'].value + "</b><br><br>";
-  e.infoWindowHtml += e.row['address'].value + "<br>";
-});
-
-// ATM layer
-atm_layer = new google.maps.FusionTablesLayer({
-  query: {
-    select: 'FULL_ADDRESS',
-    from: '1ls1MKw-iQdNYHAGh_wbtsBaGF0t2qgJgJYbHFPxI'},
+    select: 'geo_address',
+    from: ebt_fusion_table,
+    where: "state = 'CA'"},
   styles: [
-    {where: "SC = 'NO'", markerOptions: {iconName: 'large_green'} },
-    {where: "SC = 'YES'",markerOptions: {iconName: 'large_yellow'}}
+    {where: "type = 'store'", markerOptions: {iconName: 'large_blue'}},
+    {where: "type IN ('ATM', 'POS') AND surcharge = '0'", markerOptions: {iconName: 'large_green'}},
+    {where: "type IN ('ATM', 'POS') AND surcharge NOT EQUAL TO '0'", markerOptions: {iconName: 'large_yellow'}}
   ]
 });
 
@@ -72,11 +58,69 @@ if (/iPhone/i.test(navigator.userAgent)) {
     directions_pre_link = "<a href='http://maps.google.com?q="
 }
 
-google.maps.event.addListener(atm_layer, 'click', function(e) {
-  e.infoWindowHtml = "This is a <b>" + e.row['DEVICE TYPE'].value + "</b> at <b>" + e.row['NAME'].value + "</b>.<br>";
-  e.infoWindowHtml += "It costs <b>$" + e.row['SC AMOUNT'].value + "</b> and you can get up to <b>$" + e.row['CASH LIMIT'].value + "</b>.<br><br>";
-  e.infoWindowHtml += directions_pre_link + encodeURIComponent(e.row['FULL_ADDRESS'].value) + "'>Directions</a>" + "<br>";
+google.maps.event.addListener(ebt_data_layer, 'click', function(e) {
+  var row_hash = {};
+  $.each( e.row, function( key, value ) {
+    row_hash[key] = value.value
+  });
+  phrases = getPhrasesFromRow(row_hash);
+
+  // Create info window
+  if (type == 'store') {
+    e.infoWindowHtml = phrases['name_phrase'] + '<br><br>';
+    e.infoWindowHtml += phrases['directions_link'] + '<br>';
+  } else if (type == 'ATM') {
+    e.infoWindowHtml = phrases['name_phrase'] + '<br><br>';
+    e.infoWindowHtml += phrases['cost_phrase'] + '<br><br>';
+    e.infoWindowHtml += phrases['directions_link'] + '<br>';
+  } else if (type == 'POS') {
+    e.infoWindowHtml = phrases['name_phrase'] + '<br><br>';
+    e.infoWindowHtml += phrases['cost_phrase'] + '<br><br>';
+    e.infoWindowHtml += phrases['directions_link'] + '<br>';
+  }
 });
+
+function getPhrasesFromRow(row_hash) {
+  var phrases = {};
+
+  type = row_hash['type']
+  directions_link = directions_pre_link + encodeURIComponent(row_hash['text_address']) + "'>Get directions</a>"
+  phrases["directions_link"] = directions_link;
+
+  var name_phrase;
+  var printable_name_phrase;
+  location_name = row_hash['location_name']
+  atm_name = row_hash['atm_name']
+  text_address = row_hash['text_address']
+  if (type == 'store') {
+    name_phrase = row_hash['store_name'];
+    printable_name_phrase = name_phrase;
+  } else if (location_name && type == 'ATM') {
+    name_phrase = 'This is an <b>ATM</b> at ' + location_name;
+    printable_name_phrase = '<b>ATM</b> at ' + location_name;
+  } else if (type == 'ATM') {
+    name_phrase = 'This is a ' + atm_name + ' <b>ATM</b>';
+    printable_name_phrase = 'This is a ' + atm_name + ' <b>ATM</b>';
+  } else if (type == 'POS') {
+    name_phrase = 'This is a cash back location at ' + location_name;
+    printable_name_phrase = 'Cash back at ' + location_name;
+  }
+  phrases["name_phrase"] = name_phrase;
+  phrases["printable_name_phrase"] = printable_name_phrase;
+
+  var cost_phrase;
+  surcharge = row_hash['surcharge']
+  cash_limit = row_hash['cash_limit']
+  if (surcharge == '0') {
+    cost_phrase = "It's <b>free</b> to use and you can get up to <b>$" + cash_limit + "</b>";
+  } else if (isNaN(surcharge)) {
+    cost_phrase = 'You can take out <b>$' + cash_limit + '</b> but you have to pay <b>2% fee</b>.';
+  } else {
+    cost_phrase = 'It costs <b>$' + surcharge + '</b> to use and you can get up to <b>$' + cash_limit + '</b>';
+  }
+  phrases["cost_phrase"] = cost_phrase;
+  return phrases;
+}
 
 function foundLocation(position) {
   var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
@@ -113,8 +157,7 @@ function handleIdle() {
 
 function addLayersAndIdleListener() {
   // Add layers and start idle listener after we settle on initial location
-  retail_layer.setMap(map);
-  atm_layer.setMap(map);
+  ebt_data_layer.setMap(map);
   google.maps.event.addListener(map, 'idle', handleIdle);
 }
 
@@ -129,8 +172,8 @@ function queryAndAppendVisibleATMData() {
   var center = map.getCenter()
   var apiKey = 'AIzaSyDzaRUwEz7l0m3sEbROdDNCNRmsJ-zvUUc'
   var query = 'SELECT * '
-              + 'FROM 1ls1MKw-iQdNYHAGh_wbtsBaGF0t2qgJgJYbHFPxI '
-              + 'WHERE ST_INTERSECTS(FULL_ADDRESS, CIRCLE(LATLNG' + center + ', ' + r + ')) '
+              + 'FROM ' + ebt_fusion_table + ' '
+              + 'WHERE ST_INTERSECTS(geo_address, CIRCLE(LATLNG' + center + ', ' + r + ')) '
               + 'LIMIT 12';
   var encodedQuery = encodeURIComponent(query);
 
@@ -154,33 +197,26 @@ function appendVisibleAtmData(data) {
   // Append data to printable list
   var list = $( "#printable-list-div ul" ).empty();
   var rows = visible_atm_data['rows']
+  var cols = visible_atm_data['columns']
   if (rows) {
     $.each(rows, function( index, value ) {
-      device = value[2]
-      address = toTitleCase(value[3])
-      
-      var label
-      name = toTitleCase(value[4])
-      location_name = toTitleCase(value[5])
-      if(!location_name) { 
-        label = name
-      } else {
-        label = location_name
-      }
 
-      var cost_phrase
-      limit = parseInt(value[9])
-      cost = parseInt(value[11])
-      if(cost == 0) { 
-        cost_phrase = "It's <b>free</b>"
-      } else {
-        cost_phrase = "It costs $<b>" + cost + "</b>"
-      }
+      var row_hash = {};
+      $.each( value, function( index, value ) {
+        row_hash[cols[index]] = value
+      });
 
-      list.append( "<li><b>" + device + " at " + label + "</b><br>"
-        + cost_phrase + " to use and you can get up to <b>$" + limit + "</b>.<br>"
-        + address
-        + "</li>" );
+      phrases = getPhrasesFromRow(row_hash)
+      if (row_hash['type'] == 'store') {
+        list.append( "<li><b>" + phrases['printable_name_phrase'] + "</b><br>"
+          + toTitleCase(row_hash['text_address'])
+          + "</li>" );
+      } else {
+        list.append( "<li><b>" + phrases['printable_name_phrase'] + "</b><br>"
+          + phrases['cost_phrase'] + "<br>"
+          + toTitleCase(row_hash['text_address'])
+          + "</li>" );
+      }
     });
   } else {
     list.append( "<li>If you find some ATMs on the map I'll print out the details here.</li>");
