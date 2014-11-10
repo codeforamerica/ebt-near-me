@@ -68,15 +68,18 @@ google.maps.event.addListener(ebt_data_layer, 'click', function(e) {
   // Create info window
   if (type == 'store') {
     e.infoWindowHtml = phrases['name_phrase'] + '<br><br>';
-    e.infoWindowHtml += phrases['directions_link'] + '<br>';
+    e.infoWindowHtml += phrases['directions_link'] + '<br><br>';
+    e.infoWindowHtml += phrases['feedback_link_html'] + '<br>';
   } else if (type == 'ATM') {
     e.infoWindowHtml = phrases['name_phrase'] + '<br><br>';
     e.infoWindowHtml += phrases['cost_phrase'] + '<br><br>';
-    e.infoWindowHtml += phrases['directions_link'] + '<br>';
+    e.infoWindowHtml += phrases['directions_link'] + '<br><br>';
+    e.infoWindowHtml += phrases['feedback_link_html'] + '<br>';
   } else if (type == 'POS') {
     e.infoWindowHtml = phrases['name_phrase'] + '<br><br>';
     e.infoWindowHtml += phrases['cost_phrase'] + '<br><br>';
-    e.infoWindowHtml += phrases['directions_link'] + '<br>';
+    e.infoWindowHtml += phrases['directions_link'] + '<br><br>';
+    e.infoWindowHtml += phrases['feedback_link_html'] + '<br>';
   }
 });
 
@@ -119,6 +122,11 @@ function getPhrasesFromRow(row_hash) {
     cost_phrase = 'It costs <b>$' + surcharge + '</b> to use and you can get up to <b>$' + cash_limit + '</b>';
   }
   phrases["cost_phrase"] = cost_phrase;
+
+  // See CfA Wufoo API docs for details
+  wufoo_url = 'https://codeforamerica.wufoo.com/forms/ebtnearme-feedback/def/field3=' + type + '&field2=' + text_address;
+  feedback_link_html = '<a href="' + wufoo_url + '">Report a problem with this location</a>'
+  phrases["feedback_link_html"] = feedback_link_html;
   return phrases;
 }
 
