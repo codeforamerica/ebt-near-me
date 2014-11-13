@@ -94,7 +94,8 @@ function getPhrasesFromRow(row_hash) {
   var phrases = {};
 
   type = row_hash['type']
-  directions_link = directions_pre_link + encodeURIComponent(row_hash['text_address']) + "'>Get directions</a>"
+  text_address = row_hash['text_address']
+  directions_link = directions_pre_link + encodeURIComponent(text_address) + "'>" + text_address + "</a>"
   phrases["directions_link"] = directions_link;
 
   var name_phrase;
