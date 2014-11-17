@@ -49,33 +49,34 @@ ebt.googlemapOptions = {
 ebt.utils = {
   getPhrasesFromRow : function (row_hash) {
     var phrases = {};
-
     type = row_hash['type']
     text_address = row_hash['text_address']
     directions_link = ebt.directions_pre_link + encodeURIComponent(text_address) + "'>" + text_address + "</a>"
     phrases["directions_link"] = directions_link;
-
-    var name_phrase;
-    var printable_name_phrase;
     location_name = row_hash['location_name']
     atm_name = row_hash['atm_name']
-    text_address = row_hash['text_address']
-    if (type == 'store') {
-      name_phrase = row_hash['store_name'];
-      printable_name_phrase = name_phrase;
-    } else if (location_name && type == 'ATM') {
-      name_phrase = 'This is an <b>ATM</b> at ' + location_name;
-      printable_name_phrase = '<b>ATM</b> at ' + location_name;
-    } else if (type == 'ATM') {
-      name_phrase = 'This is a ' + atm_name + ' <b>ATM</b>';
-      printable_name_phrase = 'This is a ' + atm_name + ' <b>ATM</b>';
-    } else if (type == 'POS') {
-      name_phrase = 'This is a cash back location at ' + location_name;
-      printable_name_phrase = 'Cash back at ' + location_name;
+        
+    switch (type){
+      case 'store':
+        phrases["name_phrase"] = row_hash['store_name'];
+        phrases["printable_name_phrase"] = phrases["name_phrase"];
+        break;
+      case 'ATM':
+        if (location_name){
+          phrases["name_phrase"] = 'This is an <b>ATM</b> at ' + location_name;
+          phrases["printable_name_phrase"] = '<b>ATM</b> at ' + location_name;
+        } 
+        else {
+          phrases["name_phrase"] = 'This is a ' + atm_name + ' <b>ATM</b>';
+          phrases["printable_name_phrase"] = 'This is a ' + atm_name + ' <b>ATM</b>';
+        }
+        break;
+      case 'POS':
+        phrases["name_phrase"] = 'This is a cash back location at ' + location_name;
+        phrases["printable_name_phrase"] = 'Cash back at ' + location_name;
+        break;
     }
-    phrases["name_phrase"] = name_phrase;
-    phrases["printable_name_phrase"] = printable_name_phrase;
-
+        
     var cost_phrase;
     surcharge = row_hash['surcharge']
     cash_limit = row_hash['cash_limit']
@@ -276,20 +277,24 @@ $(document).ready(function () {
     phrases = ebt.utils.getPhrasesFromRow(row_hash);
 
     // Create info window
-    if (type == 'store') {
-      e.infoWindowHtml = phrases['name_phrase'] + '<br><br>';
-      e.infoWindowHtml += phrases['directions_link'] + '<br><br>';
-      e.infoWindowHtml += phrases['feedback_link_html'] + '<br>';
-    } else if (type == 'ATM') {
-      e.infoWindowHtml = phrases['name_phrase'] + '<br><br>';
-      e.infoWindowHtml += phrases['cost_phrase'] + '<br><br>';
-      e.infoWindowHtml += phrases['directions_link'] + '<br><br>';
-      e.infoWindowHtml += phrases['feedback_link_html'] + '<br>';
-    } else if (type == 'POS') {
-      e.infoWindowHtml = phrases['name_phrase'] + '<br><br>';
-      e.infoWindowHtml += phrases['cost_phrase'] + '<br><br>';
-      e.infoWindowHtml += phrases['directions_link'] + '<br><br>';
-      e.infoWindowHtml += phrases['feedback_link_html'] + '<br>';
-    }
+    switch (type){
+      case 'store':
+        e.infoWindowHtml = phrases['name_phrase'] + '<br><br>';
+        e.infoWindowHtml += phrases['directions_link'] + '<br><br>';
+        e.infoWindowHtml += phrases['feedback_link_html'] + '<br>';
+        break;
+      case 'ATM':
+        e.infoWindowHtml = phrases['name_phrase'] + '<br><br>';
+        e.infoWindowHtml += phrases['cost_phrase'] + '<br><br>';
+        e.infoWindowHtml += phrases['directions_link'] + '<br><br>';
+        e.infoWindowHtml += phrases['feedback_link_html'] + '<br>';
+        break;
+      case 'POS':
+        e.infoWindowHtml = phrases['name_phrase'] + '<br><br>';
+        e.infoWindowHtml += phrases['cost_phrase'] + '<br><br>';
+        e.infoWindowHtml += phrases['directions_link'] + '<br><br>';
+        e.infoWindowHtml += phrases['feedback_link_html'] + '<br>';
+        break;
+      }
   });
 });
