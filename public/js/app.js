@@ -20,22 +20,22 @@ ebt.fusion ={
 }
 
 ebt.fusion.data_layer = new google.maps.FusionTablesLayer({
-    query: {
-      select: 'geo_address',
-      from: ebt.fusion.table,
-      where: "state = '"+ebt.options.state+"'"},
-    styles: [
-      {where: "type = 'store'", markerOptions: {iconName: 'rec_convenience'}},
-      {where: "type IN ('ATM', 'POS') AND surcharge = '0'", markerOptions: {iconName: 'dollar'}},
-      {where: "type IN ('ATM', 'POS') AND surcharge NOT EQUAL TO '0'", markerOptions: {iconName: 'small_yellow'}}
-    ]
-  })
+  query: {
+    select: 'geo_address',
+    from: ebt.fusion.table,
+    where: "state = '"+ebt.options.state+"'"},
+  styles: [
+    {where: "type = 'store'", markerOptions: {iconName: 'rec_convenience'}},
+    {where: "type IN ('ATM', 'POS') AND surcharge = '0'", markerOptions: {iconName: 'dollar'}},
+    {where: "type IN ('ATM', 'POS') AND surcharge NOT EQUAL TO '0'", markerOptions: {iconName: 'small_yellow'}}
+  ]
+})
 
 ebt.googlemapOptions = {
-    zoom: ebt.options.no_geolocation_zoom,
-    disableDefaultUI: true,
-    center: ebt.options.LatLng,
-    styles: [
+  zoom: ebt.options.no_geolocation_zoom,
+  disableDefaultUI: true,
+  center: ebt.options.LatLng,
+  styles: [
     {
       featureType: "poi",
       elementType: "all",
@@ -115,12 +115,12 @@ ebt.utils = {
         phrases = ebt.utils.getPhrasesFromRow(row_hash)
         if (row_hash['type'] == 'store') {
           list.append( "<li><b>" + phrases['printable_name_phrase'] + "</b><br>"
-            + toTitleCase(row_hash['text_address'])
+            + ebt.utils.toTitleCase(row_hash['text_address'])
             + "</li>" );
         } else {
           list.append( "<li><b>" + phrases['printable_name_phrase'] + "</b><br>"
             + phrases['cost_phrase'] + "<br>"
-            + toTitleCase(row_hash['text_address'])
+            + ebt.utils.toTitleCase(row_hash['text_address'])
             + "</li>" );
         }
       });
@@ -134,21 +134,22 @@ ebt.utils = {
     var ne = bounds.getNorthEast()
     var r = (google.maps.geometry.spherical.computeDistanceBetween(sw, ne))/2
     var center = ebt.map.getCenter()
-    var query = 'SELECT * '
-                + 'FROM ' + ebt.fusion.table + ' '
-                + 'WHERE ST_INTERSECTS(geo_address, CIRCLE(LATLNG' + center + ', ' + r + ')) '
-                + 'LIMIT 12';
+    var query = ['SELECT *',
+                'FROM ' + ebt.fusion.table,
+                'WHERE ST_INTERSECTS(geo_address, CIRCLE(LATLNG' + center + ', ' + r + '))',
+                'LIMIT 12']
+                .join(' ')
 
     // Send the JSONP request using jQuery
     $.ajax({
       data:{
-        sql: encodeURIComponent(query),
-        key: ebt.fusion.apiKey
+        sql: query,
+        key: ebt.fusion.apiKey,
       },     
       url: 'https://www.googleapis.com/fusiontables/v1/query',
       dataType: 'jsonp',
-      success: ebt.utils.appendVisibleAtmData
-    });
+      success:ebt.utils.appendVisibleAtmData
+    })
   },
   addLayersAndIdleListener : function () {
     // Add layers and start idle listener after we settle on initial location
