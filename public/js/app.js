@@ -6,7 +6,7 @@ ebt = {
   directions_pre_link:"",
   options : {
     state:'CA',
-    LatLng: new google.maps.LatLng(37.7833, -122.4167),
+    LatLng: new google.maps.LatLng(37.7833, -122.4167), // San Francisco
     no_geolocation_zoom : 10,
     default_zoom : 18,  
     visible_atm_data:null
@@ -33,6 +33,10 @@ ebt.fusion.data_layer = new google.maps.FusionTablesLayer({
 ebt.googlemapOptions = {
   zoom: ebt.options.no_geolocation_zoom,
   disableDefaultUI: true,
+  zoomControl: true,
+  zoomControlOptions: {
+    style: google.maps.ZoomControlStyle.SMALL
+  },
   center: ebt.options.LatLng,
   styles: [
     {
@@ -205,9 +209,6 @@ $(document).ready(function () {
   }
 
   // <!-- S H O W   A N D   H I D E   S E A R C H -->
-
-  // With the element initially shown, we can hide it slowly:
-
   $( "#toggle-target" ).click(toggleSearchBox);
 
   function toggleSearchBox() {
@@ -231,7 +232,6 @@ $(document).ready(function () {
   var input = (document.getElementById('pac-input'));
   ebt.map.controls[google.maps.ControlPosition.TOP_LEFT ].push(input);
   ebt.searchBox = new google.maps.places.SearchBox(input);
-
 
   // start adding events
   google.maps.event.addListener(ebt.searchBox, 'places_changed', function() {
