@@ -33,10 +33,6 @@ ebt.fusion.data_layer = new google.maps.FusionTablesLayer({
 ebt.googlemapOptions = {
   zoom: ebt.options.no_geolocation_zoom,
   disableDefaultUI: true,
-  zoomControl: true,
-  zoomControlOptions: {
-    style: google.maps.ZoomControlStyle.SMALL
-  },
   center: ebt.options.LatLng,
   styles: [
     {
@@ -206,6 +202,12 @@ $(document).ready(function () {
     ebt.directions_pre_link = "<a href='geo:"
   } else {
     ebt.directions_pre_link = "<a href='http://maps.google.com?q="
+
+    // Add zoom button for laptops/desktops
+    ebt.googlemapOptions.zoomControl = true
+    ebt.googlemapOptions.zoomControlOptions = {
+      style: google.maps.ZoomControlStyle.SMALL
+    }
   }
 
   // <!-- S H O W   A N D   H I D E   S E A R C H -->
