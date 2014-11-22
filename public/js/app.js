@@ -287,6 +287,7 @@ $(document).ready(function () {
 
     if (type==='ATM'||type==='POS'){
       new_info.append($('<div>').html(phrases['cost_phrase']))
+      new_info.append("<br>")
     }
 
     new_info.append(phrases['directions_link'])
