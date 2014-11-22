@@ -3,6 +3,7 @@ ebt = {
   user:{
     marker: null
   },
+  infoWindow : new google.maps.InfoWindow(),
   directions_pre_link:"",
   options : {
     state:'CA',
@@ -19,6 +20,7 @@ ebt.fusion ={
 }
 
 ebt.fusion.data_layer = new google.maps.FusionTablesLayer({
+  suppressInfoWindows:true,
   query: {
     select: 'geo_address',
     from: ebt.fusion.table,
@@ -275,27 +277,30 @@ $(document).ready(function () {
     $.each( e.row, function( key, value ) {
       row_hash[key] = value.value
     });
+    
     phrases = ebt.utils.getPhrasesFromRow(row_hash);
 
     // Create info window
-    switch (type){
-      case 'store':
-        e.infoWindowHtml = phrases['name_phrase'] + '<br><br>';
-        e.infoWindowHtml += phrases['directions_link'] + '<br><br>';
-        e.infoWindowHtml += phrases['feedback_link_html'] + '<br>';
-        break;
-      case 'ATM':
-        e.infoWindowHtml = phrases['name_phrase'] + '<br><br>';
-        e.infoWindowHtml += phrases['cost_phrase'] + '<br><br>';
-        e.infoWindowHtml += phrases['directions_link'] + '<br><br>';
-        e.infoWindowHtml += phrases['feedback_link_html'] + '<br>';
-        break;
-      case 'POS':
-        e.infoWindowHtml = phrases['name_phrase'] + '<br><br>';
-        e.infoWindowHtml += phrases['cost_phrase'] + '<br><br>';
-        e.infoWindowHtml += phrases['directions_link'] + '<br><br>';
-        e.infoWindowHtml += phrases['feedback_link_html'] + '<br>';
-        break;
-      }
+    new_info = $('<div>')
+    new_info.append($('<b>').html(phrases['name_phrase']))
+    new_info.append("<br><br>")
+
+    if (type==='ATM'||type==='POS'){
+      new_info.append($('<div>').html(phrases['cost_phrase']))
+    }
+
+    new_info.append(phrases['directions_link'])
+    new_info.append("<br><br>")
+
+    new_info.append(phrases['feedback_link_html'])
+    new_info.append("<br><br>")
+    
+    ebt.infoWindow.setOptions({
+      content: new_info.html(),
+      position: e.latLng,
+      pixelOffset: e.pixelOffset
+    });
+    ebt.infoWindow.open(ebt.map);
+      
   });
 });
