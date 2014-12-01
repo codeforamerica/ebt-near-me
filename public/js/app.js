@@ -26,9 +26,9 @@ ebt.fusion.data_layer = new google.maps.FusionTablesLayer({
     from: ebt.fusion.table,
     where: "state = '"+ebt.options.state+"'"},
   styles: [
-    {where: "type = 'store'", markerOptions: {iconName: 'rec_convenience'}},
-    {where: "type IN ('ATM', 'POS') AND surcharge = '0'", markerOptions: {iconName: 'dollar'}},
-    {where: "type IN ('ATM', 'POS') AND surcharge NOT EQUAL TO '0'", markerOptions: {iconName: 'small_yellow'}}
+    {where: "type = 'store'", markerOptions: {iconName: 'blu_circle'}},
+    {where: "type IN ('ATM', 'POS') AND surcharge = '0'", markerOptions: {iconName: 'grn_circle'}},
+    {where: "type IN ('ATM', 'POS') AND surcharge NOT EQUAL TO '0'", markerOptions: {iconName: 'ylw_circle'}}
   ]
 })
 
@@ -236,6 +236,16 @@ $(document).ready(function () {
   var input = (document.getElementById('pac-input'));
   ebt.map.controls[google.maps.ControlPosition.TOP_LEFT ].push(input);
   ebt.searchBox = new google.maps.places.SearchBox(input);
+
+  // Legend
+  var legend = (document.getElementById('legend'));
+  var content = [];
+  content.push('<p><div class="color green"></div>Free ATMs</p>');
+  content.push('<p><div class="color yellow"></div>Paid ATMs</p>');
+  content.push('<p><div class="color blue"></div>Stores that accept CalFresh</p>');
+  legend.innerHTML = content.join('');
+  legend.index = 1;
+  ebt.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
 
   // start adding events
   google.maps.event.addListener(ebt.searchBox, 'places_changed', function() {
