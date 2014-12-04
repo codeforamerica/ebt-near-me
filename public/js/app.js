@@ -290,6 +290,13 @@ $(document).ready(function () {
     
     phrases = ebt.utils.getPhrasesFromRow(row_hash);
 
+    // Log click events in Google analytics
+    if (type=='ATM'||type=='POS') {
+      ga('send', 'event', 'ebt', 'click', 'atm', 1);
+    } else if (type=='store') {
+      ga('send', 'event', 'ebt', 'click', 'store', 1);
+    }
+
     // Create info window
     new_info = $('<div>')
     new_info.append($('<b>').html(phrases['name_phrase']))
