@@ -292,9 +292,9 @@ $(document).ready(function () {
 
     // Log click events in Google analytics
     if (type=='ATM'||type=='POS') {
-      ga('send', 'event', 'ebt', 'click', 'atm', 1);
+      ga('send', 'event', 'ATM', 'click', 1);
     } else if (type=='store') {
-      ga('send', 'event', 'ebt', 'click', 'store', 1);
+      ga('send', 'event', 'Store', 'click', 1);
     }
 
     // Create info window
