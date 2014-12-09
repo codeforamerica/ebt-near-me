@@ -208,7 +208,8 @@ $(document).ready(function () {
     // Add zoom button for laptops/desktops
     ebt.googlemapOptions.zoomControl = true
     ebt.googlemapOptions.zoomControlOptions = {
-      style: google.maps.ZoomControlStyle.SMALL
+      style: google.maps.ZoomControlStyle.LARGE,
+      position: google.maps.ControlPosition.LEFT_CENTER
     }
   }
 
@@ -233,8 +234,9 @@ $(document).ready(function () {
   navigator.geolocation.getCurrentPosition(ebt.handle.foundLocation, ebt.handle.noLocation);
 
   // Search
+  var identity = (document.getElementById('identity'));
+  ebt.map.controls[google.maps.ControlPosition.TOP_LEFT ].push(identity);
   var input = (document.getElementById('pac-input'));
-  ebt.map.controls[google.maps.ControlPosition.TOP_LEFT ].push(input);
   ebt.searchBox = new google.maps.places.SearchBox(input);
 
   // Legend

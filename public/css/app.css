@@ -22,27 +22,23 @@ html {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-header {
-	height: 2.85em;
+#identity {
+	width: 100%;
+	height: 4em;
 	margin: 0;
 	padding: 0;
-	z-index: 200;
 }
 
 .header-content {
 	width: 100%;
-	height: 100%;
+	height: 4em;
 	background-color: #1f75bb;
-	border-bottom: 1px solid gray;
 }
 
 
 /* S E A R C H */
 
 #pac-input {
-	border-radius: 0 0 0 0;
-	-webkit-border-radius: 0 0 0 0;
-	left: 0;
 	display: none;
 }
 
@@ -56,6 +52,7 @@ header {
 	-webkit-border-radius: 0 0 0 0;
 	-moz-border-radius: 0 0 0 0;
 	padding: 18px;
+	border-bottom: 1px solid gray;
 }
 
 .input-hide {
@@ -75,7 +72,7 @@ header {
 .logo-img {
 	position: relative;
 	display: inline-block;
-	width: 65px;
+	width: 4em;
 	z-index: 200;
 }
 
@@ -85,7 +82,6 @@ h1 {
 	vertical-align: top;
 	font-family: "proxima-nova", sans-serif;
 	font-size: 18px;
-	margin: .9em 0;
 	color: white;
 }
 
@@ -104,9 +100,9 @@ h1#title-thin {
 #toggle-target {
 	position: absolute;
 	right: 0;
-	height: 5em;
+	height: 4em;
 	width: 5em;
-	background-color: rgba(0,0,0,0);
+	background-color: rgba(28, 97, 153, 1);
 	border: none;
 	cursor: pointer;
 }
@@ -133,35 +129,6 @@ h1#title-thin {
 	z-index: 100;
 }
 
-
-/* D E S K T O P   S T Y L E S */
-
-@media (min-width: 960px) {
-	header {
-		height: 4em;
-		z-index: 200;
-	}
-	.logo-img {
-		width: 90px;
-	}
-	h1 {
-		font-size: 24px;
-		margin: 1em 0;
-	}
-	#toggle-target {
-		right: 2em;
-		width: 7em;
-		height: 7em;
-	}
-	.toggle-icon {
-		width: 3em;
-		height: 3em;
-	}
-	#map-canvas {
-		height: 100%;
-	}
-}
-
 #legend {
 	width: 100px;
 	pointer-events: none;
@@ -170,9 +137,9 @@ h1#title-thin {
 	padding: 10px;
 	margin: 5px;
 	font-size: 12px;
-	font-family: Arial, sans-serif;
-	margin-bottom:50px;
+	font-family: "proxima-nova", sans-serif;
 }
+
 .color {
   border: 1px solid;
   height: 12px;
@@ -191,6 +158,37 @@ h1#title-thin {
 
 .blue {
   background: #06C;
+}
+
+
+/* D E S K T O P   S T Y L E S */
+
+@media (min-width: 960px) {
+	#identity{
+		height: 6em;
+		z-index: 200;
+	}
+	.header-content{
+		height: 6em;
+	}
+	.logo-img {
+		width: 6em;
+	}
+	h1 {
+		font-size: 26px;
+	}
+	#toggle-target {
+		right: 0;
+		width: 8em;
+		height: 6em;
+	}
+	.toggle-icon {
+		width: 3em;
+		height: 3em;
+	}
+	#map-canvas {
+		height: 100%;
+	}
 }
 
 /* Printing */
@@ -230,7 +228,7 @@ h1#title-thin {
 	  width: 50%;
 	}
 
-	header, .sb-search-input, .sb-search-submit, #legend{
+	#identity, .sb-search-input, .sb-search-submit, #legend{
 		display: none;
 	}
 }

@@ -36,9 +36,12 @@
       ga('send', 'pageview');
     </script>
   </head>
-  
+
   <body>
-    <header>
+    <div id="map-canvas"></div>
+    <div id="printable-list-div"><ul></ul></div>
+    <div id="legend"></div>
+    <div id="identity">
       <div class="header-content">
         <img id="logo" class="logo-img" src="assets/images/retail-icon.png" alt="">
         <h1 id="title-thick" class="title">EBT</h1>
@@ -50,11 +53,7 @@
         </button>
       </div>
       <input id="pac-input" class="sb-search-input" placeholder="Search by address" type="search" name="search">
-    </header>
     </div>
-    <div id="map-canvas"></div>
-    <div id="printable-list-div"><ul></ul></div>
-    <div id="legend"></div>
     <script src="public/js/app.js"></script>
   </body>
 </html>
