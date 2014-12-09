@@ -11,9 +11,9 @@ Store location data downloaded from the USDA's [SNAP Retailer Locator](http://ww
 
 Metrics
 ---------
-It's an [ongoing conversation](https://github.com/fureigh/ebt-near-me/issues/42) so feel free to chime in. But we're getting started with:
+It's an ongoing conversation so feel free to chime in! But we're getting started with:
 - weekly users
-- non-bounced rate
+- conversion rate (open any infowindow)
 
 ![EBTNearMe Metrics](https://docs.google.com/spreadsheets/d/1QvuRlZ2ILqnFfVhPH0nbP8PRp8iWPZ-CNTL28n9wunc/pubchart?oid=2036684695&format=image)
 ([source data](https://docs.google.com/a/codeforamerica.org/spreadsheets/d/1QvuRlZ2ILqnFfVhPH0nbP8PRp8iWPZ-CNTL28n9wunc/edit?copiedFromTrash#gid=1078780145))
