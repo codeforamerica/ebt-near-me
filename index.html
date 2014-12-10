@@ -3,6 +3,7 @@
   <head>
     <title>EBT Near Me</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta http-equiv=X-UA-Compatible content=IE=EmulateIE7/>
     <meta charset="utf-8">
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="apple-touch-icon" href="icon.png">
@@ -21,6 +22,10 @@
     <!-- G E O M I C O N S -->
     <script src="http://d2v52k3cl9vedd.cloudfront.net/geomicons/0.2.0/geomicons.min.js"></script>
 
+    <!-- T Y P E K I T -->
+    <script src="//use.typekit.net/ize7qgl.js"></script>
+    <script>try{Typekit.load();}catch(e){}</script>
+
     <!-- Google Analytics -->
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -32,9 +37,12 @@
       ga('send', 'pageview');
     </script>
   </head>
-  
+
   <body>
-    <header>
+    <div id="map-canvas"></div>
+    <div id="printable-list-div"><ul></ul></div>
+    <div id="legend"></div>
+    <div id="identity">
       <div class="header-content">
         <img id="logo" class="logo-img" src="assets/images/retail-icon.png" alt="">
         <h1 id="title-thick" class="title">EBT</h1>
@@ -45,12 +53,8 @@
           <span id="search-icon" class="js-geomicon toggle-icon" data-icon="search"></span>
         </button>
       </div>
-      <input id="pac-input" class="sb-search-input" placeholder="Search by address" type="search" name="search">
-    </header>
+      <input id="pac-input" class="sb-search-input" placeholder="Search for locations near an address" type="search" name="search">
     </div>
-    <div id="map-canvas"></div>
-    <div id="printable-list-div"><ul></ul></div>
-    <div id="legend"></div>
     <script src="public/js/app.js"></script>
   </body>
 </html>

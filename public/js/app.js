@@ -208,7 +208,8 @@ $(document).ready(function () {
     // Add zoom button for laptops/desktops
     ebt.googlemapOptions.zoomControl = true
     ebt.googlemapOptions.zoomControlOptions = {
-      style: google.maps.ZoomControlStyle.SMALL
+      style: google.maps.ZoomControlStyle.LARGE,
+      position: google.maps.ControlPosition.LEFT_CENTER
     }
   }
 
@@ -224,6 +225,7 @@ $(document).ready(function () {
       $("#pac-input").show();
       $("#search-icon").hide();
       $("#close-icon").show();
+      $( "#pac-input" ).focus();
     }
   }
   
@@ -233,19 +235,20 @@ $(document).ready(function () {
   navigator.geolocation.getCurrentPosition(ebt.handle.foundLocation, ebt.handle.noLocation);
 
   // Search
+  var identity = (document.getElementById('identity'));
+  ebt.map.controls[google.maps.ControlPosition.TOP_LEFT ].push(identity);
   var input = (document.getElementById('pac-input'));
-  ebt.map.controls[google.maps.ControlPosition.TOP_LEFT ].push(input);
   ebt.searchBox = new google.maps.places.SearchBox(input);
 
   // Legend
   var legend = (document.getElementById('legend'));
   var content = [];
-  content.push('<p><div class="color green"></div>Free ATMs</p>');
-  content.push('<p><div class="color yellow"></div>Paid ATMs</p>');
-  content.push('<p><div class="color blue"></div>Stores that accept CalFresh</p>');
+  content.push('<div class="legend-item"><div class="color green"></div><p>Free ATMs</p></div>');
+  content.push('<div class="legend-item"><div class="color yellow"></div><p>Paid ATMs</p></div>');
+  content.push('<div class="legend-item"><div class="color blue"></div><p>CalFresh Stores</p></div>');
   legend.innerHTML = content.join('');
   legend.index = 1;
-  ebt.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
+  ebt.map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(legend);
 
   // start adding events
   google.maps.event.addListener(ebt.searchBox, 'places_changed', function() {
