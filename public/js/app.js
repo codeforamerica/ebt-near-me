@@ -243,12 +243,12 @@ $(document).ready(function () {
   // Legend
   var legend = (document.getElementById('legend'));
   var content = [];
-  content.push('<p><div class="color green"></div>Free ATMs</p>');
-  content.push('<p><div class="color yellow"></div>Paid ATMs</p>');
-  content.push('<p><div class="color blue"></div>Stores that accept CalFresh</p>');
+  content.push('<div class="legend-item"><div class="color green"></div><p>Free ATMs</p></div>');
+  content.push('<div class="legend-item"><div class="color yellow"></div><p>Paid ATMs</p></div>');
+  content.push('<div class="legend-item"><div class="color blue"></div><p>CalFresh Stores</p></div>');
   legend.innerHTML = content.join('');
   legend.index = 1;
-  ebt.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
+  ebt.map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(legend);
 
   // start adding events
   google.maps.event.addListener(ebt.searchBox, 'places_changed', function() {

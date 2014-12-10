@@ -131,22 +131,37 @@ h1#title-thin {
 }
 
 #legend {
-	width: 100px;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
 	pointer-events: none;
 	font-weight: bold;
-	background: #FFF;
+	background: rgba(255,255,255, 0.8);
+	border-top: 2px solid white;
 	padding: 10px;
-	margin: 5px;
 	font-size: 12px;
 	font-family: "proxima-nova", sans-serif;
 }
 
+#legend .legend-item {
+	position: relative;
+	display: inline-block;
+	width: 33%;
+	text-align: center;
+}
+
+.legend-item p {
+	margin: 0 0 1.25em 0;
+}
+
 .color {
-  border: 1px solid;
-  height: 12px;
-  width: 12px;
-  margin-right: 3px;
-  float: left;
+	position: relative;
+	display: inline-block;
+	border: 1px solid;
+	height: 12px;
+	width: 12px;
+	margin-right: 3px;
 }
 
 .yellow {
