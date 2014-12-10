@@ -225,6 +225,7 @@ $(document).ready(function () {
       $("#pac-input").show();
       $("#search-icon").hide();
       $("#close-icon").show();
+      $( "#pac-input" ).focus();
     }
   }
   

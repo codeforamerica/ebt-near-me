@@ -49,8 +49,9 @@ html {
 	font-size: 1.25em;
 	border: 1px solid white;
 	border-radius: 0 0 0 0;
-	-webkit-border-radius: 0 0 0 0;
-	-moz-border-radius: 0 0 0 0;
+	-webkit-appearance: none;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
 	padding: 18px;
 	border-bottom: 1px solid gray;
 }
@@ -185,6 +186,9 @@ h1#title-thin {
 	.toggle-icon {
 		width: 3em;
 		height: 3em;
+	}
+	.sb-search-input {
+		font-size: 2em;
 	}
 	#map-canvas {
 		height: 100%;
