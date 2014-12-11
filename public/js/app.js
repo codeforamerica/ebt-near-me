@@ -52,7 +52,7 @@ ebt.utils = {
     var phrases = {};
     type = row_hash['type']
     text_address = row_hash['text_address']
-    directions_link = ebt.directions_pre_link + encodeURIComponent(text_address) + "'>" + text_address + "</a>"
+    directions_link = ebt.directions_pre_link + encodeURIComponent(text_address) + "' target='_blank'>" + text_address + "</a>"
     phrases["directions_link"] = directions_link;
     location_name = row_hash['location_name']
     atm_name = row_hash['atm_name']
