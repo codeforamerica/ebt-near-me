@@ -38,7 +38,7 @@ html {
 
 /* S E A R C H */
 
-#pac-input {
+#address-input {
 	display: none;
 }
 
@@ -98,8 +98,9 @@ h1#title-thin {
 }
 
 #toggle-target {
-	position: absolute;
-	right: 0;
+	display: inline-block;
+	position: relative;
+	float: right;
 	height: 4em;
 	width: 5em;
 	background-color: rgba(28, 97, 153, 1);
@@ -136,7 +137,7 @@ h1#title-thin {
 	width: 100%;
 	pointer-events: none;
 	font-weight: bold;
-	background: rgba(255,255,255, 0.8);
+	background: rgba(255,255,255, 1);
 	border-top: 2px solid white;
 	padding: 10px;
 	font-size: 12px;
