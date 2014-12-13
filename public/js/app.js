@@ -19,18 +19,47 @@ ebt.fusion ={
   apiKey : 'AIzaSyDzaRUwEz7l0m3sEbROdDNCNRmsJ-zvUUc'
 }
 
+
+ebt.markers = {
+  types : [
+    {
+      query:   {where: "type IN ('ATM', 'POS') AND surcharge = '0'", markerOptions: {iconName: 'grn_circle'}},
+      legend: '<p><div class="color green"></div>Free ATMs</p>'
+    },
+    {
+      query:     {where: "type IN ('ATM', 'POS') AND surcharge NOT EQUAL TO '0'", markerOptions: {iconName: 'ylw_circle'}},
+      legend: '<p><div class="color yellow"></div>Paid ATMs</p>'
+    },
+    {
+      query:    {where: "type = 'store'", markerOptions: {iconName: 'blu_circle'}},
+      legend: '<p><div class="color blue"></div>Stores that accept CalFresh</p>'
+    }
+  ],
+  getArray : function (item,i) {
+    q = []
+    i = i || 0
+    for (i; i < ebt.markers.types.length; i++) {
+      q.push(ebt.markers.types[i][item])
+    }
+    return q
+  },
+  queries : function (i) {
+    return ebt.markers.getArray('query',i)
+  },
+  legend : function (i) {
+    return ebt.markers.getArray('legend',i).join('')
+  }
+}
+
 ebt.fusion.data_layer = new google.maps.FusionTablesLayer({
   suppressInfoWindows:true,
   query: {
     select: 'geo_address',
     from: ebt.fusion.table,
     where: "state = '"+ebt.options.state+"'"},
-  styles: [
-    {where: "type = 'store'", markerOptions: {iconName: 'blu_circle'}},
-    {where: "type IN ('ATM', 'POS') AND surcharge = '0'", markerOptions: {iconName: 'grn_circle'}},
-    {where: "type IN ('ATM', 'POS') AND surcharge NOT EQUAL TO '0'", markerOptions: {iconName: 'ylw_circle'}}
-  ]
+  styles: ebt.markers.queries()
 })
+
 
 ebt.googlemapOptions = {
   zoom: ebt.options.no_geolocation_zoom,
@@ -239,13 +268,14 @@ $(document).ready(function () {
 
   // Legend
   var legend = (document.getElementById('legend'));
-  var content = [];
-  content.push('<p><div class="color green"></div>Free ATMs</p>');
-  content.push('<p><div class="color yellow"></div>Paid ATMs</p>');
-  content.push('<p><div class="color blue"></div>Stores that accept CalFresh</p>');
-  legend.innerHTML = content.join('');
+  legend.innerHTML = ebt.markers.legend();
   legend.index = 1;
   ebt.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
+
+  $('#legend').on("click",function (e) {
+    debugger;
+  })
+
 
   // start adding events
   google.maps.event.addListener(ebt.searchBox, 'places_changed', function() {
