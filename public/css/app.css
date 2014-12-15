@@ -108,10 +108,10 @@ h1#title-thin {
 	cursor: pointer;
 }
 
-.toggle-icon {
+#toggle-icon {
 	width: 2em;
 	height: 2em;
-	margin: 0 auto;
+	margin: 1em auto;
 	color: white;
 }
 
@@ -198,9 +198,10 @@ h1#title-thin {
 		width: 8em;
 		height: 6em;
 	}
-	.toggle-icon {
+	#toggle-icon {
 		width: 3em;
 		height: 3em;
+		margin: 1.5em auto;
 	}
 	.sb-search-input {
 		font-size: 1.5em;

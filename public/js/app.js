@@ -198,13 +198,15 @@ ebt.handle ={
   },
   toggleSearch : function() {
     var input = document.getElementById('address-input');
-    console.log(input)
-    if (input.style.display !== 'none') {
-        input.style.display = 'none';
-    }
-    else {
+    var toggle = document.getElementById('toggle-icon');
+    if (input.style.display == 'none') {
         input.style.display = 'block';
         input.focus();
+        toggle.setAttribute("src", "public/img/close.png")
+    }
+    else {
+        input.style.display = 'none';
+        toggle.setAttribute("src", "public/img/search.png")
     }
   }
 };
@@ -241,16 +243,15 @@ $(document).ready(function () {
 
   // Search
 
-  var toggleTargetContent = []
-  toggleTargetContent.push("<span id='close-icon' class='js-geomicon toggle-icon' data-icon='close'>Close</span>");
-  toggleTargetContent.push("<span id='search-icon' class='js-geomicon toggle-icon' data-icon='search'>Search</span>");
+  var toggleTargetIcon = (document.createElement('img'));
+  ebt.utils.setElementAttributes(toggleTargetIcon, {"id": "toggle-icon", "src": "public/img/search.png", "style": "display:block"});
 
   var toggleTarget = (document.createElement('div'));
-  toggleTarget.innerHTML = toggleTargetContent.join(' ');
+  toggleTarget.appendChild(toggleTargetIcon);
   ebt.utils.setElementAttributes(toggleTarget, {"id": "toggle-target", "onclick": "ebt.handle.toggleSearch()"});
 
   var brand = []
-  brand.push("<img id='logo' class='logo-img' src='assets/images/retail-icon.png' alt=''>");
+  brand.push("<img id='logo' class='logo-img' src='public/img/logo.png' alt=''>");
   brand.push("<h1 id='title-thick' class='title'>EBT</h1>");
   brand.push("<h1 id='title-regular' class='title'>Near</h1>");
   brand.push("<h1 id='title-thin' class='title'>Me</h1>");
@@ -262,7 +263,7 @@ $(document).ready(function () {
 
   var addressInput = (document.createElement('input'));
   addressInput.setAttribute("id", "address-input");
-  ebt.utils.setElementAttributes(addressInput, {"class": "sb-search-input", "placeholder": "Search for locations near an address", "type": "search", "name": "search"});
+  ebt.utils.setElementAttributes(addressInput, {"class": "sb-search-input", "placeholder": "Search for locations near an address", "type": "search", "name": "search", "style": "display:none"});
 
   var identity = (document.createElement('div'));
   identity.setAttribute("id", "identity");
