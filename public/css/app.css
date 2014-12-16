@@ -103,7 +103,7 @@ h1#title-thin {
 	float: right;
 	height: 4em;
 	width: 5em;
-	background-color: rgba(28, 97, 153, 1);
+	background-color: #1C6199;
 	border: none;
 	cursor: pointer;
 }
@@ -112,7 +112,7 @@ h1#title-thin {
 	width: 2em;
 	height: 2em;
 	margin: 1em auto;
-	color: white;
+	color: #fff;
 }
 
 #search-icon {
@@ -137,7 +137,7 @@ h1#title-thin {
 	width: 100%;
 	pointer-events: none;
 	font-weight: bold;
-	background: rgba(255,255,255, 1);
+	background: #fff;
 	border-top: 2px solid white;
 	padding: 10px;
 	font-size: 12px;

@@ -212,7 +212,6 @@ ebt.handle ={
 };
 
 $(document).ready(function () {
-  //  G E O M I C O N S   G O   H E R E
 
   if (/iPhone/i.test(navigator.userAgent)) {
     ebt.directions_pre_link = "<a href='http://maps.google.com/?saddr=Current%20Location&daddr="
@@ -237,7 +236,7 @@ $(document).ready(function () {
     if (Modernizr.geolocation) {
       navigator.geolocation.getCurrentPosition(ebt.handle.foundLocation, ebt.handle.noLocation);
     } else {
-      alert("You don't have geolocation!");
+      ebt.handle.noLocation();
     }
   });
 
