@@ -218,7 +218,7 @@ h1#title-thin {
 
 @media print {
 	body {
-/*		width: 900px;*/
+		width: 900px;
 	}
 
 	#map-canvas {
