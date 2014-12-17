@@ -9,7 +9,7 @@ ebt = {
     state:'CA',
     LatLng: new google.maps.LatLng(37.7833, -122.4167), // San Francisco
     no_geolocation_zoom : 10,
-    default_zoom : 18,  
+    default_zoom : 18,
     visible_atm_data:null
   }
 }
@@ -56,7 +56,7 @@ ebt.utils = {
     phrases["directions_link"] = directions_link;
     location_name = row_hash['location_name']
     atm_name = row_hash['atm_name']
-        
+
     switch (type){
       case 'store':
         phrases["name_phrase"] = row_hash['store_name'];
@@ -77,7 +77,7 @@ ebt.utils = {
         phrases["printable_name_phrase"] = 'Cash back at ' + location_name;
         break;
     }
-        
+
     var cost_phrase;
     surcharge = row_hash['surcharge']
     cash_limit = row_hash['cash_limit']
@@ -145,8 +145,8 @@ ebt.utils = {
     $.ajax({
       data:{
         sql: query,
-        key: ebt.fusion.apiKey,
-      },     
+        key: ebt.fusion.apiKey
+      },
       url: 'https://www.googleapis.com/fusiontables/v1/query',
       dataType: 'jsonp',
       success:ebt.utils.appendVisibleAtmData
@@ -156,7 +156,12 @@ ebt.utils = {
     // Start idle listener after we settle on initial location
     ebt.fusion.data_layer.setMap(ebt.map);
     google.maps.event.addListener(ebt.map, 'idle', ebt.handle.Idle);
-  } 
+  },
+  setElementAttributes : function(el, attrs) {
+    for(var key in attrs) {
+      el.setAttribute(key, attrs[key]);
+    }
+  }
 }
 
 ebt.handle ={
@@ -182,7 +187,7 @@ ebt.handle ={
     infowindow = new google.maps.InfoWindow({
       map: ebt.map,
       position: ebt.map.getCenter(),
-      content: "Hmmm, I couldn't detect your location.<br>Try searching for an address instead.",
+      content: "Hmmm, I couldn't detect your location.<br>Try searching for an address instead."
     });
     infowindow.setMap(ebt.map);
     ebt.utils.addLayersAndIdleListener();
@@ -190,13 +195,23 @@ ebt.handle ={
   Idle: function () {
     window.clearTimeout(ebt.timeoutID);
     ebt.timeoutID = window.setTimeout(ebt.utils.queryAndAppendVisibleATMData, 2000);
+  },
+  toggleSearch : function() {
+    var input = document.getElementById('address-input');
+    var toggle = document.getElementById('toggle-icon');
+    if (input.style.display == 'none') {
+        input.style.display = 'block';
+        input.focus();
+        toggle.setAttribute("src", "public/img/close.png")
+    }
+    else {
+        input.style.display = 'none';
+        toggle.setAttribute("src", "public/img/search.png")
+    }
   }
-}
+};
 
 $(document).ready(function () {
-  // <!-- I N J E C T   G E O M I C O N S -->
-  var icons = document.querySelectorAll('.js-geomicon');
-  Geomicons.inject(icons);
 
   if (/iPhone/i.test(navigator.userAgent)) {
     ebt.directions_pre_link = "<a href='http://maps.google.com/?saddr=Current%20Location&daddr="
@@ -208,44 +223,64 @@ $(document).ready(function () {
     // Add zoom button for laptops/desktops
     ebt.googlemapOptions.zoomControl = true
     ebt.googlemapOptions.zoomControlOptions = {
-      style: google.maps.ZoomControlStyle.SMALL
+      style: google.maps.ZoomControlStyle.LARGE,
+      position: google.maps.ControlPosition.LEFT_CENTER
     }
   }
 
-  // <!-- S H O W   A N D   H I D E   S E A R C H -->
-  $( "#toggle-target" ).click(toggleSearchBox);
-
-  function toggleSearchBox() {
-    if ($("#pac-input").is(':visible')) {
-      $( "#pac-input" ).hide();
-      $( "#close-icon").hide();
-      $( "#search-icon").show();
-    } else {
-      $("#pac-input").show();
-      $("#search-icon").hide();
-      $("#close-icon").show();
-    }
-  }
-  
   ebt.map = new google.maps.Map(document.getElementById('map-canvas'), ebt.googlemapOptions);
 
   // Try HTML5 geolocation
-  navigator.geolocation.getCurrentPosition(ebt.handle.foundLocation, ebt.handle.noLocation);
+  $(function () {
+    if (Modernizr.geolocation) {
+      navigator.geolocation.getCurrentPosition(ebt.handle.foundLocation, ebt.handle.noLocation, {timeout:7000});
+    } else {
+      ebt.handle.noLocation();
+    }
+  });
 
   // Search
-  var input = (document.getElementById('pac-input'));
-  ebt.map.controls[google.maps.ControlPosition.TOP_LEFT ].push(input);
-  ebt.searchBox = new google.maps.places.SearchBox(input);
+  var toggleTargetIcon = (document.createElement('img'));
+  ebt.utils.setElementAttributes(toggleTargetIcon, {"id": "toggle-icon", "src": "public/img/search.png", "style": "display:block"});
+
+  var toggleTarget = (document.createElement('div'));
+  toggleTarget.appendChild(toggleTargetIcon);
+  ebt.utils.setElementAttributes(toggleTarget, {"id": "toggle-target", "onclick": "ebt.handle.toggleSearch()"});
+
+  var brand = []
+  brand.push("<img id='logo' class='logo-img' src='public/img/logo.png' alt=''>");
+  brand.push("<h1 id='title-thick' class='title'>EBT</h1>");
+  brand.push("<h1 id='title-regular' class='title'>Near</h1>");
+  brand.push("<h1 id='title-thin' class='title'>Me</h1>");
+
+  var headerContent = (document.createElement('div'));
+  headerContent.setAttribute("class", "header-content");
+  headerContent.innerHTML = brand.join(' ');
+  headerContent.appendChild(toggleTarget);
+
+  var addressInput = (document.createElement('input'));
+  addressInput.setAttribute("id", "address-input");
+  ebt.utils.setElementAttributes(addressInput, {"class": "sb-search-input", "placeholder": "Search for locations near an address", "type": "search", "name": "search", "style": "display:none"});
+
+  var identity = (document.createElement('div'));
+  identity.setAttribute("id", "identity");
+  identity.appendChild(headerContent);
+  identity.appendChild(addressInput);
+
+  ebt.map.controls[google.maps.ControlPosition.TOP_LEFT ].push(identity);
+  ebt.searchBox = new google.maps.places.SearchBox(addressInput);
 
   // Legend
-  var legend = (document.getElementById('legend'));
+  var legend = (document.createElement('div'));
+  legend.setAttribute("id", "legend");
+
   var content = [];
-  content.push('<p><div class="color green"></div>Free ATMs</p>');
-  content.push('<p><div class="color yellow"></div>Paid ATMs</p>');
-  content.push('<p><div class="color blue"></div>Stores that accept CalFresh</p>');
+  content.push('<div class="legend-item"><div class="color green"></div><p>Free ATMs</p></div>');
+  content.push('<div class="legend-item"><div class="color yellow"></div><p>Paid ATMs</p></div>');
+  content.push('<div class="legend-item"><div class="color blue"></div><p>CalFresh Stores</p></div>');
   legend.innerHTML = content.join('');
   legend.index = 1;
-  ebt.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
+  ebt.map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(legend);
 
   // start adding events
   google.maps.event.addListener(ebt.searchBox, 'places_changed', function() {
@@ -287,7 +322,7 @@ $(document).ready(function () {
     $.each( e.row, function( key, value ) {
       row_hash[key] = value.value
     });
-    
+
     phrases = ebt.utils.getPhrasesFromRow(row_hash);
 
     // Log click events in Google analytics
@@ -312,13 +347,13 @@ $(document).ready(function () {
 
     new_info.append(phrases['feedback_link_html'])
     new_info.append("<br><br>")
-    
+
     ebt.infoWindow.setOptions({
       content: new_info.html(),
       position: e.latLng,
       pixelOffset: e.pixelOffset
     });
     ebt.infoWindow.open(ebt.map);
-      
+
   });
 });
