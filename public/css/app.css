@@ -218,34 +218,43 @@ h1#title-thin {
 
 @media print {
 	body {
-		width: 900px;
+/*		width: 900px;*/
 	}
 
 	#map-canvas {
-		margin-left: auto;
-		margin-right: auto;
 		height: 900px;
-		width: 1350px;
+		margin: 4em;
 		zoom: .5;
 	}
-	
+
+	.print-identity {
+		color: #1f75bb;
+		font-family: sans-serif;
+		display: inline-block;
+		padding-right: 1em;
+	}
+	.print-header {
+		font-family: sans-serif;
+		display: inline-block;
+	}
+
 	#printable-list-div {
 		display: inline;
+		margin: 2.25em;
 	}
 
 	#printable-list-div ul {
 		list-style-type: none;
-		padding: 0;
+		padding: 2.25em;
 		overflow:hidden;
 	}
 
 	#printable-list-div ul li {
-		padding-top: 20px;
-		padding-bottom: 20px;
+		padding-bottom: 1.5em;
 		line-height:1.5em;
-	  float:left;
-	  display:inline;
-	  width: 50%;
+		display: inline-block;
+		width: 50%;
+		font-family: sans-serif;
 	}
 
 	#identity, .sb-search-input, .sb-search-submit, #legend{

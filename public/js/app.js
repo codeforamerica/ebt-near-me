@@ -231,17 +231,15 @@ $(document).ready(function () {
   ebt.map = new google.maps.Map(document.getElementById('map-canvas'), ebt.googlemapOptions);
 
   // Try HTML5 geolocation
-  // navigator.geolocation.getCurrentPosition(ebt.handle.foundLocation, ebt.handle.noLocation);
   $(function () {
     if (Modernizr.geolocation) {
-      navigator.geolocation.getCurrentPosition(ebt.handle.foundLocation, ebt.handle.noLocation);
+      navigator.geolocation.getCurrentPosition(ebt.handle.foundLocation, ebt.handle.noLocation, {timeout:7000});
     } else {
       ebt.handle.noLocation();
     }
   });
 
   // Search
-
   var toggleTargetIcon = (document.createElement('img'));
   ebt.utils.setElementAttributes(toggleTargetIcon, {"id": "toggle-icon", "src": "public/img/search.png", "style": "display:block"});
 
