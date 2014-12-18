@@ -17,14 +17,9 @@ ebt = {
     state:'CA',
     LatLng: new google.maps.LatLng(37.7833, -122.4167), // San Francisco
     no_geolocation_zoom : 10,
-    default_zoom : 18,  
+    default_zoom : 18,
     visible_atm_data:null
   }
-}
-
-ebt.fusion ={
-  table : '1gTMiiUxNgLDISIymtea1gJ9oph_F4Lt7BE-FLfAe',
-  apiKey : 'AIzaSyDzaRUwEz7l0m3sEbROdDNCNRmsJ-zvUUc'
 }
 
 ebt.markers = {
@@ -71,6 +66,11 @@ ebt.markers = {
   }
 }
 
+ebt.fusion ={
+  table : '1gTMiiUxNgLDISIymtea1gJ9oph_F4Lt7BE-FLfAe',
+  apiKey : 'AIzaSyDzaRUwEz7l0m3sEbROdDNCNRmsJ-zvUUc'
+}
+
 ebt.fusion.data_layer = new google.maps.FusionTablesLayer({
   suppressInfoWindows:true,
   query: {
@@ -100,11 +100,11 @@ ebt.utils = {
     var phrases = {};
     type = row_hash['type']
     text_address = row_hash['text_address']
-    directions_link = ebt.directions_pre_link + encodeURIComponent(text_address) + "'>" + text_address + "</a>"
+    directions_link = ebt.directions_pre_link + encodeURIComponent(text_address) + "' target='_blank'>" + text_address + "</a>"
     phrases["directions_link"] = directions_link;
     location_name = row_hash['location_name']
     atm_name = row_hash['atm_name']
-        
+
     switch (type){
       case 'store':
         phrases["name_phrase"] = row_hash['store_name'];
@@ -125,7 +125,7 @@ ebt.utils = {
         phrases["printable_name_phrase"] = 'Cash back at ' + location_name;
         break;
     }
-        
+
     var cost_phrase;
     surcharge = row_hash['surcharge']
     cash_limit = row_hash['cash_limit']
@@ -193,8 +193,8 @@ ebt.utils = {
     $.ajax({
       data:{
         sql: query,
-        key: ebt.fusion.apiKey,
-      },     
+        key: ebt.fusion.apiKey
+      },
       url: 'https://www.googleapis.com/fusiontables/v1/query',
       dataType: 'jsonp',
       success:ebt.utils.appendVisibleAtmData
@@ -204,7 +204,12 @@ ebt.utils = {
     // Start idle listener after we settle on initial location
     ebt.fusion.data_layer.setMap(ebt.map);
     google.maps.event.addListener(ebt.map, 'idle', ebt.handle.Idle);
-  } 
+  },
+  setElementAttributes : function(el, attrs) {
+    for(var key in attrs) {
+      el.setAttribute(key, attrs[key]);
+    }
+  }
 }
 
 ebt.handle ={
@@ -230,7 +235,7 @@ ebt.handle ={
     infowindow = new google.maps.InfoWindow({
       map: ebt.map,
       position: ebt.map.getCenter(),
-      content: "Hmmm, I couldn't detect your location.<br>Try searching for an address instead.",
+      content: "Hmmm, I couldn't detect your location.<br>Try searching for an address instead."
     });
     infowindow.setMap(ebt.map);
     ebt.utils.addLayersAndIdleListener();
@@ -238,13 +243,23 @@ ebt.handle ={
   Idle: function () {
     window.clearTimeout(ebt.timeoutID);
     ebt.timeoutID = window.setTimeout(ebt.utils.queryAndAppendVisibleATMData, 2000);
+  },
+  toggleSearch : function() {
+    var input = document.getElementById('address-input');
+    var toggle = document.getElementById('toggle-icon');
+    if (input.style.display == 'none') {
+        input.style.display = 'block';
+        input.focus();
+        toggle.setAttribute("src", "public/img/close.png")
+    }
+    else {
+        input.style.display = 'none';
+        toggle.setAttribute("src", "public/img/search.png")
+    }
   }
-}
+};
 
 $(document).ready(function () {
-  // <!-- I N J E C T   G E O M I C O N S -->
-  var icons = document.querySelectorAll('.js-geomicon');
-  Geomicons.inject(icons);
 
   switch (navigator.userAgent){
     case 'iPhone':
@@ -263,46 +278,35 @@ $(document).ready(function () {
       }
   }
 
-  // <!-- S H O W   A N D   H I D E   S E A R C H -->
-  $( "#toggle-target" ).click(toggleSearchBox);
-
-  function toggleSearchBox() {
-    if ($("#pac-input").is(':visible')) {
-      $( "#pac-input" ).hide();
-      $( "#close-icon").hide();
-      $( "#search-icon").show();
-    } else {
-      $("#pac-input").show();
-      $("#search-icon").hide();
-      $("#close-icon").show();
-      $( "#pac-input" ).focus();
-    }
-  }
-  
   ebt.map = new google.maps.Map(document.getElementById('map-canvas'), ebt.googlemapOptions);
 
   // Try HTML5 geolocation
-  navigator.geolocation.getCurrentPosition(ebt.handle.foundLocation, ebt.handle.noLocation);
-
-  // Search
-  var identity = (document.getElementById('identity'));
-  ebt.map.controls[google.maps.ControlPosition.TOP_LEFT ].push(identity);
-  var input = (document.getElementById('pac-input'));
-  ebt.searchBox = new google.maps.places.SearchBox(input);
+  $(function () {
+    if (Modernizr.geolocation) {
+      navigator.geolocation.getCurrentPosition(ebt.handle.foundLocation, ebt.handle.noLocation, {timeout:7000});
+    } else {
+      ebt.handle.noLocation();
+    }
+  });
+  
+  // add header
+  ebt.map.controls[google.maps.ControlPosition.TOP_LEFT ].push(document.getElementById('header'));
+  ebt.searchBox = new google.maps.places.SearchBox(document.getElementById("address-input"));
 
   // Legend
-  var legend = (document.getElementById('legend'));
+  var legend = (document.createElement('div'));
+  legend.setAttribute("id", "legend");
   legend.innerHTML = ebt.markers.legend();
   legend.index = 1;
   ebt.map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(legend);
 
-  $('#logo').on("click",function (e) {
-    debugger;
-    
-    ebt.utils.queryAndAppendVisibleATMData
-  })
 
   // start adding events
+  
+  $('#toggle-target').on("click",function (e) {
+    ebt.handle.toggleSearch()
+  })  
+
   google.maps.event.addListener(ebt.searchBox, 'places_changed', function() {
     place = ebt.searchBox.getPlaces()[0];
 
@@ -341,7 +345,7 @@ $(document).ready(function () {
     $.each( e.row, function( key, value ) {
       row_hash[key] = value.value
     });
-    
+
     phrases = ebt.utils.getPhrasesFromRow(row_hash);
 
     // Log click events in Google analytics
@@ -366,13 +370,13 @@ $(document).ready(function () {
 
     new_info.append(phrases['feedback_link_html'])
     new_info.append("<br><br>")
-    
+
     ebt.infoWindow.setOptions({
       content: new_info.html(),
       position: e.latLng,
       pixelOffset: e.pixelOffset
     });
     ebt.infoWindow.open(ebt.map);
-      
+
   });
 });

@@ -3,7 +3,7 @@
   <head>
     <title>EBT Near Me</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta http-equiv=X-UA-Compatible content=IE=EmulateIE7/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="apple-touch-icon" href="icon.png">
@@ -19,8 +19,8 @@
     <!-- C U S T O M   S T Y L E S -->
     <link rel="stylesheet" href="public/css/app.css">
 
-    <!-- G E O M I C O N S -->
-    <script src="http://d2v52k3cl9vedd.cloudfront.net/geomicons/0.2.0/geomicons.min.js"></script>
+    <!-- M O D E R N I Z E R -->
+    <script src="public/js/modernizer.js"></script>
 
     <!-- T Y P E K I T -->
     <script src="//use.typekit.net/ize7qgl.js"></script>
@@ -39,22 +39,24 @@
   </head>
 
   <body>
-    <div id="map-canvas"></div>
-    <div id="printable-list-div"><ul></ul></div>
-    <div id="legend"></div>
-    <div id="identity">
-      <div class="header-content">
-        <img id="logo" class="logo-img" src="assets/images/retail-icon.png" alt="">
-        <h1 id="title-thick" class="title">EBT</h1>
-        <h1 id="title-regular"class="title">Near</h1>
-        <h1 id="title-thin" class="title">Me</h1>
-        <button id="toggle-target">
-          <span id="close-icon" class="js-geomicon toggle-icon" data-icon="close"></span>
-          <span id="search-icon" class="js-geomicon toggle-icon" data-icon="search"></span>
-        </button>
+    <div id="header" class="header-content">
+      <img id="logo" class="logo-img" src="public/img/logo.png" alt="" name="logo">
+      <h1 id="title-thick" class="title">EBT</h1>
+      <h1 id="title-regular" class="title">Near</h1>
+      <h1 id="title-thin" class="title">Me</h1>
+      <div id="toggle-target">
+        <img id="toggle-icon" src="public/img/search.png" style="display:block" name="toggle-icon">
       </div>
-      <input id="pac-input" class="sb-search-input" placeholder="Search for locations near an address" type="search" name="search">
+      <input id="address-input" class="sb-search-input" placeholder="Search for locations near an address" 
+              type="search" name="search" style="display:none">
+    </div>
+    <div id="map-canvas"></div>
+    <div id="printable-list-div">
+      <h2 class="print-identity">EBT Near Me</h2>
+      <h3 class="print-header">EBT Retail and ATM Locations</h3>
+      <ul></ul>
     </div>
     <script src="public/js/app.js"></script>
   </body>
 </html>
+

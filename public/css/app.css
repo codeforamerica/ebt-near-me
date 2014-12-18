@@ -38,7 +38,7 @@ html {
 
 /* S E A R C H */
 
-#pac-input {
+#address-input {
 	display: none;
 }
 
@@ -98,20 +98,21 @@ h1#title-thin {
 }
 
 #toggle-target {
-	position: absolute;
-	right: 0;
+	display: inline-block;
+	position: relative;
+	float: right;
 	height: 4em;
 	width: 5em;
-	background-color: rgba(28, 97, 153, 1);
+	background-color: #1C6199;
 	border: none;
 	cursor: pointer;
 }
 
-.toggle-icon {
+#toggle-icon {
 	width: 2em;
 	height: 2em;
-	margin: 0 auto;
-	color: white;
+	margin: 1em auto;
+	color: #fff;
 }
 
 #search-icon {
@@ -136,7 +137,7 @@ h1#title-thin {
 	width: 100%;
 	pointer-events: none;
 	font-weight: bold;
-	background: rgba(255,255,255, 0.8);
+	background: #fff;
 	border-top: 2px solid white;
 	padding: 10px;
 	font-size: 12px;
@@ -197,9 +198,10 @@ h1#title-thin {
 		width: 8em;
 		height: 6em;
 	}
-	.toggle-icon {
+	#toggle-icon {
 		width: 3em;
 		height: 3em;
+		margin: 1.5em auto;
 	}
 	.sb-search-input {
 		font-size: 1.5em;
@@ -220,30 +222,39 @@ h1#title-thin {
 	}
 
 	#map-canvas {
-		margin-left: auto;
-		margin-right: auto;
 		height: 900px;
-		width: 1350px;
+		margin: 4em;
 		zoom: .5;
 	}
-	
+
+	.print-identity {
+		color: #1f75bb;
+		font-family: sans-serif;
+		display: inline-block;
+		padding-right: 1em;
+	}
+	.print-header {
+		font-family: sans-serif;
+		display: inline-block;
+	}
+
 	#printable-list-div {
 		display: inline;
+		margin: 2.25em;
 	}
 
 	#printable-list-div ul {
 		list-style-type: none;
-		padding: 0;
+		padding: 2.25em;
 		overflow:hidden;
 	}
 
 	#printable-list-div ul li {
-		padding-top: 20px;
-		padding-bottom: 20px;
+		padding-bottom: 1.5em;
 		line-height:1.5em;
-	  float:left;
-	  display:inline;
-	  width: 50%;
+		display: inline-block;
+		width: 50%;
+		font-family: sans-serif;
 	}
 
 	#identity, .sb-search-input, .sb-search-submit, #legend{
