@@ -39,6 +39,17 @@
   </head>
 
   <body>
+    <div id="header" class="header-content">
+      <img id="logo" class="logo-img" src="public/img/logo.png" alt="" name="logo">
+      <h1 id="title-thick" class="title">EBT</h1>
+      <h1 id="title-regular" class="title">Near</h1>
+      <h1 id="title-thin" class="title">Me</h1>
+      <div id="toggle-target">
+        <img id="toggle-icon" src="public/img/search.png" style="display:block" name="toggle-icon">
+      </div>
+      <input id="address-input" class="sb-search-input" placeholder="Search for locations near an address" 
+              type="search" name="search" style="display:none">
+    </div>
     <div id="map-canvas"></div>
     <div id="printable-list-div">
       <h2 class="print-identity">EBT Near Me</h2>
@@ -48,3 +59,4 @@
     <script src="public/js/app.js"></script>
   </body>
 </html>
+

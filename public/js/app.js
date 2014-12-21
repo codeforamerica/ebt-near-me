@@ -1,3 +1,11 @@
+//simple object for rotating through 0 to n
+function Rotator (n,state){
+  state = state || 0
+  return function () {
+    return state < n ? state+=1 : state = 0
+  }
+}
+
 ebt = {
   timeoutID:null,
   user:{
@@ -14,6 +22,50 @@ ebt = {
   }
 }
 
+ebt.markers = {
+  types : [
+    {
+      style:   {where: "type IN ('ATM', 'POS') AND surcharge = '0'", markerOptions: {iconName: 'grn_circle'}},
+      legend: {
+        title:'Free ATMs',
+        color: 'green'
+      }
+    },
+    {
+      style:     {where: "type IN ('ATM', 'POS') AND surcharge NOT EQUAL TO '0'", markerOptions: {iconName: 'ylw_circle'}},
+      legend: {
+        title:'Paid ATMs',
+        color: 'yellow'
+      }
+    },
+    {
+      style:    {where: "type = 'store'", markerOptions: {iconName: 'blu_circle'}},
+      legend:{
+        title:'Stores that accept CalFresh',
+        color: 'blue'
+      }
+    }
+  ],
+  getArray : function (item,i) {
+    q = []
+    i = i || 0
+    for (i; i < ebt.markers.types.length; i++) {
+      q.push(ebt.markers.types[i][item])
+    }
+    return q
+  },
+  styles : function (i) {
+    return ebt.markers.getArray('style',i)
+  },
+  legend : function (i) {
+    return ebt.markers.getArray('legend',i)
+      .map(function (val) {
+        return '<div class="legend-item"><div class="color '+val.color+'"></div>'+val.title+'</p></div>'
+      })
+      .join('')
+  }
+}
+
 ebt.fusion ={
   table : '1gTMiiUxNgLDISIymtea1gJ9oph_F4Lt7BE-FLfAe',
   apiKey : 'AIzaSyDzaRUwEz7l0m3sEbROdDNCNRmsJ-zvUUc'
@@ -25,11 +77,7 @@ ebt.fusion.data_layer = new google.maps.FusionTablesLayer({
     select: 'geo_address',
     from: ebt.fusion.table,
     where: "state = '"+ebt.options.state+"'"},
-  styles: [
-    {where: "type = 'store'", markerOptions: {iconName: 'blu_circle'}},
-    {where: "type IN ('ATM', 'POS') AND surcharge = '0'", markerOptions: {iconName: 'grn_circle'}},
-    {where: "type IN ('ATM', 'POS') AND surcharge NOT EQUAL TO '0'", markerOptions: {iconName: 'ylw_circle'}}
-  ]
+  styles: ebt.markers.styles()
 })
 
 ebt.googlemapOptions = {
@@ -213,19 +261,21 @@ ebt.handle ={
 
 $(document).ready(function () {
 
-  if (/iPhone/i.test(navigator.userAgent)) {
-    ebt.directions_pre_link = "<a href='http://maps.google.com/?saddr=Current%20Location&daddr="
-  } else if (/Android/i.test(navigator.userAgent)) {
-    ebt.directions_pre_link = "<a href='geo:"
-  } else {
-    ebt.directions_pre_link = "<a href='http://maps.google.com?q="
-
-    // Add zoom button for laptops/desktops
-    ebt.googlemapOptions.zoomControl = true
-    ebt.googlemapOptions.zoomControlOptions = {
-      style: google.maps.ZoomControlStyle.LARGE,
-      position: google.maps.ControlPosition.LEFT_CENTER
-    }
+  switch (navigator.userAgent){
+    case 'iPhone':
+      ebt.directions_pre_link = "<a href='http://maps.google.com/?saddr=Current%20Location&daddr=";
+      break;
+    case 'Android':
+      ebt.directions_pre_link = "<a href='geo:";
+      break;
+    default:
+      ebt.directions_pre_link = "<a href='http://maps.google.com?q=";
+      // Add zoom button for laptops/desktops
+      ebt.googlemapOptions.zoomControl = true
+      ebt.googlemapOptions.zoomControlOptions = {
+        style: google.maps.ZoomControlStyle.LARGE,
+        position: google.maps.ControlPosition.LEFT_CENTER
+      }
   }
 
   ebt.map = new google.maps.Map(document.getElementById('map-canvas'), ebt.googlemapOptions);
@@ -238,51 +288,25 @@ $(document).ready(function () {
       ebt.handle.noLocation();
     }
   });
-
-  // Search
-  var toggleTargetIcon = (document.createElement('img'));
-  ebt.utils.setElementAttributes(toggleTargetIcon, {"id": "toggle-icon", "src": "public/img/search.png", "style": "display:block"});
-
-  var toggleTarget = (document.createElement('div'));
-  toggleTarget.appendChild(toggleTargetIcon);
-  ebt.utils.setElementAttributes(toggleTarget, {"id": "toggle-target", "onclick": "ebt.handle.toggleSearch()"});
-
-  var brand = []
-  brand.push("<img id='logo' class='logo-img' src='public/img/logo.png' alt=''>");
-  brand.push("<h1 id='title-thick' class='title'>EBT</h1>");
-  brand.push("<h1 id='title-regular' class='title'>Near</h1>");
-  brand.push("<h1 id='title-thin' class='title'>Me</h1>");
-
-  var headerContent = (document.createElement('div'));
-  headerContent.setAttribute("class", "header-content");
-  headerContent.innerHTML = brand.join(' ');
-  headerContent.appendChild(toggleTarget);
-
-  var addressInput = (document.createElement('input'));
-  addressInput.setAttribute("id", "address-input");
-  ebt.utils.setElementAttributes(addressInput, {"class": "sb-search-input", "placeholder": "Search for locations near an address", "type": "search", "name": "search", "style": "display:none"});
-
-  var identity = (document.createElement('div'));
-  identity.setAttribute("id", "identity");
-  identity.appendChild(headerContent);
-  identity.appendChild(addressInput);
-
-  ebt.map.controls[google.maps.ControlPosition.TOP_LEFT ].push(identity);
-  ebt.searchBox = new google.maps.places.SearchBox(addressInput);
+  
+  // add header
+  ebt.map.controls[google.maps.ControlPosition.TOP_LEFT ].push(document.getElementById('header'));
+  ebt.searchBox = new google.maps.places.SearchBox(document.getElementById("address-input"));
 
   // Legend
   var legend = (document.createElement('div'));
   legend.setAttribute("id", "legend");
-
-  var content = [];
-  content.push('<div class="legend-item"><div class="color green"></div><p>Free ATMs</p></div>');
-  content.push('<div class="legend-item"><div class="color yellow"></div><p>Paid ATMs</p></div>');
-  content.push('<div class="legend-item"><div class="color blue"></div><p>CalFresh Stores</p></div>');
-  legend.innerHTML = content.join('');
+  legend.innerHTML = ebt.markers.legend();
   legend.index = 1;
   ebt.map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(legend);
 
+
   // start adding events
+  
+  $('#toggle-target').on("click",function (e) {
+    ebt.handle.toggleSearch()
+  })  
+
   google.maps.event.addListener(ebt.searchBox, 'places_changed', function() {
     place = ebt.searchBox.getPlaces()[0];
 
@@ -296,9 +320,8 @@ $(document).ready(function () {
     };
 
     // Remove current marker if it exists and add the new one
-    marker = ebt.user.marker
-    if (marker) {marker.setMap(null)};
-    marker = new google.maps.Marker({
+    if (ebt.user.marker) {ebt.user.marker.setMap(null)};
+    ebt.user.marker = new google.maps.Marker({
       map: ebt.map,
       icon: image,
       title: place.name,
