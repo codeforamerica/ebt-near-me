@@ -60,7 +60,7 @@ ebt.markers = {
   legend : function (i) {
     return ebt.markers.getArray('legend',i)
       .map(function (val) {
-        return '<div class="legend-item"><div class="color '+val.color+'"></div>'+val.title+'</p></div>'
+        return '<div class="legend-item"><div class="color '+val.color+'"></div><p>'+val.title+'</p></div>'
       })
       .join('')
   }
