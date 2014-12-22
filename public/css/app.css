@@ -53,6 +53,7 @@ html {
 	-moz-border-radius: 0;
 	padding: 1em;
 	border-bottom: 1px solid gray;
+	margin-top: -1em;
 }
 
 .input-hide {
