@@ -41,7 +41,7 @@ ebt.markers = {
     {
       style:    {where: "type = 'store'", markerOptions: {iconName: 'blu_circle'}},
       legend:{
-        title:'Stores that accept CalFresh',
+        title:'CalFresh Stores',
         color: 'blue'
       }
     }
@@ -288,7 +288,7 @@ $(document).ready(function () {
       ebt.handle.noLocation();
     }
   });
-  
+
   // add header
   ebt.map.controls[google.maps.ControlPosition.TOP_LEFT ].push(document.getElementById('header'));
   ebt.searchBox = new google.maps.places.SearchBox(document.getElementById("address-input"));
@@ -302,10 +302,10 @@ $(document).ready(function () {
 
 
   // start adding events
-  
+
   $('#toggle-target').on("click",function (e) {
     ebt.handle.toggleSearch()
-  })  
+  })
 
   google.maps.event.addListener(ebt.searchBox, 'places_changed', function() {
     place = ebt.searchBox.getPlaces()[0];
