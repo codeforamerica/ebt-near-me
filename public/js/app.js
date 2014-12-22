@@ -261,21 +261,18 @@ ebt.handle ={
 
 $(document).ready(function () {
 
-  switch (navigator.userAgent){
-    case 'iPhone':
-      ebt.directions_pre_link = "<a href='http://maps.google.com/?saddr=Current%20Location&daddr=";
-      break;
-    case 'Android':
-      ebt.directions_pre_link = "<a href='geo:";
-      break;
-    default:
-      ebt.directions_pre_link = "<a href='http://maps.google.com?q=";
-      // Add zoom button for laptops/desktops
-      ebt.googlemapOptions.zoomControl = true
-      ebt.googlemapOptions.zoomControlOptions = {
-        style: google.maps.ZoomControlStyle.LARGE,
-        position: google.maps.ControlPosition.LEFT_CENTER
-      }
+  if (/iPhone/i.test(navigator.userAgent)) {
+    ebt.directions_pre_link = "<a href='http://maps.google.com/?saddr=Current%20Location&daddr="
+  } else if (/Android/i.test(navigator.userAgent)) {
+    ebt.directions_pre_link = "<a href='geo:"
+  } else {
+    ebt.directions_pre_link = "<a href='http://maps.google.com?q="
+    // Add zoom button for laptops/desktops
+    ebt.googlemapOptions.zoomControl = true
+    ebt.googlemapOptions.zoomControlOptions = {
+      style: google.maps.ZoomControlStyle.LARGE,
+      position: google.maps.ControlPosition.LEFT_CENTER
+    }
   }
 
   ebt.map = new google.maps.Map(document.getElementById('map-canvas'), ebt.googlemapOptions);
