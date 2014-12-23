@@ -12,7 +12,7 @@ Want to help?
 
 Please do! Issues ready to be worked on: [![Ready](https://badge.waffle.io/lippytak/ebt-near-me.svg?label=ready&title=Ready)](http://waffle.io/lippytak/ebt-near-me)
 
-The app is currently being piloted by human service agencies in counties across California. Case workers are using EBT Near Me to help onboard new enrollees, giving them the information they need to develop healthy shopping and financial routines. As a result, the app is developed with *Internet Explorer 8* support in mind. Use Browserstack(http://www.browserstack.com/) or another cross-browser testing tool to ensure you contributions are supported.
+The app is currently being piloted by human service agencies in counties across California. Case workers are using EBT Near Me to help onboard new enrollees, giving them the information they need to develop healthy shopping and financial routines. As a result, the app is developed with *Internet Explorer 8* support in mind. Use [Browserstack](http://www.browserstack.com/) or another cross-browser testing tool to ensure you contributions are supported.
 
 At the same time, our research shows that significant number of people searching for this information are doing so from their mobile phones. As a result, a mobile-first approach is equally important.
 
