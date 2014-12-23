@@ -58,11 +58,9 @@ ebt.markers = {
     return ebt.markers.getArray('style',i)
   },
   legend : function (i) {
-    return ebt.markers.getArray('legend',i)
-      .map(function (val) {
+    return $.map(ebt.markers.getArray('legend',i),function (val) {
         return '<div class="legend-item"><div class="color '+val.color+'"></div><p>'+val.title+'</p></div>'
-      })
-      .join('')
+      }).join('')
   }
 }
 
