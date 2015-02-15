@@ -7,28 +7,15 @@ Phase: [**Alpha**](https://www.gov.uk/service-manual/phases)
 
 Context: ["Where can I use my EBT card?"](https://github.com/codeforamerica/health-project-ideas/issues/33)
 
-Want to help?
+Contribute
 -------------
+Issues ready to be worked on: [![Ready](https://badge.waffle.io/codeforamerica/ebt-near-me.svg?label=ready&title=Ready)](http://waffle.io/codeforamerica/ebt-near-me)
 
-Please do! Issues ready to be worked on: [![Ready](https://badge.waffle.io/lippytak/ebt-near-me.svg?label=ready&title=Ready)](http://waffle.io/lippytak/ebt-near-me)
+We support IE 8+ on Desktop so make sure to test using [Browserstack](http://www.browserstack.com/) or another cross-browser testing tool.
 
-The app is currently being piloted by human service agencies in counties across California. Case workers are using EBT Near Me to help onboard new enrollees, giving them the information they need to develop healthy shopping and financial routines. As a result, the app is developed with *Internet Explorer 8* support in mind. Use [Browserstack](http://www.browserstack.com/) or another cross-browser testing tool to ensure you contributions are supported.
-
-At the same time, our research shows that significant number of people searching for this information are doing so from their mobile phones. As a result, a mobile-first approach is equally important.
-
-
-Metrics
----------
-It's an ongoing conversation so feel free to chime in! But we're getting started with:
-- weekly users
-- conversion rate (open any infowindow)
-
-![EBTNearMe Metrics](https://docs.google.com/spreadsheets/d/1QvuRlZ2ILqnFfVhPH0nbP8PRp8iWPZ-CNTL28n9wunc/pubchart?oid=2036684695&format=image)
-([source data](https://docs.google.com/a/codeforamerica.org/spreadsheets/d/1QvuRlZ2ILqnFfVhPH0nbP8PRp8iWPZ-CNTL28n9wunc/edit?copiedFromTrash#gid=1078780145))
-
-Where is the data from?
+Data sources
 -----------------------
 
 Store location data downloaded from the USDA's [SNAP Retailer Locator](http://www.fns.usda.gov/snap/retailerlocator).
 
-ATM locations and metadata provided by the State of California Office of Systems Integration.
+ATM locations and metadata provided by the State of California Office of Systems Integration (OSI).
